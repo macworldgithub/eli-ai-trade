@@ -1,0 +1,10 @@
+/* Remove default centering */
+.App {
+  min-height: 100vh;
+}
+
+/* Ensure consistent dark background */
+#root {
+  min-height: 100vh;
+  background-color: #08080A;
+}

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, NavLink, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import {
   LayoutDashboard,
@@ -11,10 +11,17 @@ import {
   BarChart3,
   ScrollText,
   Bell,
+  Sun,
+  Moon,
 } from "lucide-react";
 import "@/App.css";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { useTheme } from "./context/ThemeContext";
+import { toast } from "sonner";
 
 import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import Markets from "./pages/Markets";
 import TradeSignals from "./pages/TradeSignals";
 import RiskCalculator from "./pages/RiskCalculator";
@@ -132,52 +139,124 @@ const WorldClocks = () => {
   );
 };
 
-const Header = ({ setIsOpen }) => (
-  <header className="sticky top-0 z-30 bg-[#0A1628]/95 backdrop-blur-sm border-b border-[#1E3A5F]">
-    <div className="flex items-center justify-between px-4 lg:px-6 py-3">
-      <button
-        onClick={() => setIsOpen(true)}
-        className="lg:hidden p-2 hover:bg-[#1E3A5F] rounded-sm transition-colors"
-        data-testid="mobile-menu-btn"
-      >
-        <Menu className="w-5 h-5" />
-      </button>
-
-      <div className="flex-1 lg:flex-none">
-        <WorldClocks />
-      </div>
-
-      <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 rounded-sm">
-        <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-        <span className="text-xs font-semibold text-emerald-400 tracking-wider">LIVE</span>
-      </div>
-    </div>
-  </header>
-);
-
-function App() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+const Header = ({ setIsOpen }) => {
+  const { theme, toggleTheme } = useTheme();
   return (
-    <BrowserRouter>
-      <div className="min-h-screen bg-[#0A1628]">
-        <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-        <div className="lg:ml-64">
-          <Header setIsOpen={setSidebarOpen} />
-          <main className="p-4 lg:p-6">
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/signals" element={<TradeSignals />} />
-              <Route path="/markets" element={<Markets />} />
-              <Route path="/calendar" element={<EconomicCalendar />} />
-              <Route path="/risk-calculator" element={<RiskCalculator />} />
-              <Route path="/journal" element={<TradeJournal />} />
-              <Route path="/reports" element={<Reports />} />
-              <Route path="/strategy" element={<Strategy />} />
-              <Route path="/alerts" element={<Alerts />} />
-            </Routes>
-          </main>
+    <header className="sticky top-0 z-30 bg-[#0A1628]/95 backdrop-blur-sm border-b border-[#1E3A5F]">
+      <div className="flex items-center justify-between px-4 lg:px-6 py-3">
+        <button
+          onClick={() => setIsOpen(true)}
+          className="lg:hidden p-2 hover:bg-[#1E3A5F] rounded-sm transition-colors"
+          data-testid="mobile-menu-btn"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+
+        <div className="flex-1 lg:flex-none">
+          <WorldClocks />
+        </div>
+
+        <div className="flex items-center gap-3">
+          {/* Theme toggle */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full hover:bg-[#1E3A5F] transition-colors"
+            title={`Switch to ${theme === "dark" ? "light" : "dark"} mode (Ctrl+K)`}
+          >
+            {theme === "dark" ? (
+              <Sun className="w-5 h-5 text-[#D4AF37]" />
+            ) : (
+              <Moon className="w-5 h-5 text-[#1E3A5F]" />
+            )}
+          </button>
+
+          {/* Notification bell */}
+          <button
+            onClick={() => toast("Notification Center opened")}
+            className="p-2 rounded-full hover:bg-[#1E3A5F] transition-colors"
+            title="Notifications (Ctrl+M)"
+          >
+            <Bell className="w-5 h-5 text-[#D4AF37]" />
+          </button>
+
+          {/* Live indicator */}
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 rounded-sm">
+            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+            <span className="text-xs font-semibold text-emerald-400 tracking-wider">LIVE</span>
+          </div>
         </div>
       </div>
+    </header>
+  );
+};
+
+/**
+ * Inner component that lives inside BrowserRouter so it can use useNavigate.
+ * Keyboard shortcuts and router-dependent hooks go here.
+ */
+const AppRoutes = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const navigate = useNavigate();
+  const { toggleTheme } = useTheme();
+
+  // Global keyboard shortcuts
+  useEffect(() => {
+    const handler = (e) => {
+      // Ctrl+K → toggle theme
+      if (e.ctrlKey && !e.shiftKey && e.key === "k") {
+        e.preventDefault();
+        toggleTheme();
+      }
+      // Ctrl+L → go to login
+      if (e.ctrlKey && !e.shiftKey && e.key === "l") {
+        e.preventDefault();
+        navigate("/login");
+      }
+      // Ctrl+M → notification demo
+      if (e.ctrlKey && !e.shiftKey && e.key === "m") {
+        e.preventDefault();
+        toast("Demo notification");
+      }
+      // Ctrl+Shift+S → submit current form
+      if (e.ctrlKey && e.shiftKey && e.key === "S") {
+        e.preventDefault();
+        const btn = document.querySelector('button[type="submit"]');
+        if (btn) btn.click();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [navigate, toggleTheme]);
+
+  return (
+    <div className="min-h-screen bg-[#0A1628]">
+      <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+      <div className="lg:ml-64">
+        <Header setIsOpen={setSidebarOpen} />
+        <main className="p-4 lg:p-6">
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/signals" element={<ProtectedRoute><TradeSignals /></ProtectedRoute>} />
+            <Route path="/markets" element={<ProtectedRoute><Markets /></ProtectedRoute>} />
+            <Route path="/calendar" element={<ProtectedRoute><EconomicCalendar /></ProtectedRoute>} />
+            <Route path="/risk-calculator" element={<ProtectedRoute><RiskCalculator /></ProtectedRoute>} />
+            <Route path="/journal" element={<ProtectedRoute><TradeJournal /></ProtectedRoute>} />
+            <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+            <Route path="/strategy" element={<ProtectedRoute><Strategy /></ProtectedRoute>} />
+            <Route path="/alerts" element={<ProtectedRoute><Alerts /></ProtectedRoute>} />
+          </Routes>
+        </main>
+      </div>
+    </div>
+  );
+};
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppRoutes />
     </BrowserRouter>
   );
 }

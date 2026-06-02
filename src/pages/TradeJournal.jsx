@@ -11,9 +11,14 @@ import {
   ChevronDown,
   ChevronUp,
   Activity,
+  Trash2,
+  Download,
+  Tag,
+  Link as LinkIcon,
 } from "lucide-react";
 import { tradeAPI, aiAPI, marketAPI } from "../lib/api";
 import { toast } from "sonner";
+import RiskCalculator from "./RiskCalculator";
 
 const SESSIONS = ["ASIA", "LONDON", "NEW_YORK", "OVERLAP"];
 const DIRECTIONS = ["LONG", "SHORT"];
@@ -39,9 +44,9 @@ const detectSession = () => {
 
 // ============== Stat card ==============
 const Stat = ({ label, value, color = "text-white" }) => (
-  <div className="eli-card p-3">
+  <div className="eli-card p-4">
     <p className="text-[10px] uppercase tracking-wider text-[#94A3B8]">{label}</p>
-    <p className={`font-heading text-2xl font-bold mt-1 ${color}`}>{value}</p>
+    <p className={`font-heading text-3xl font-bold mt-1 ${color}`}>{value}</p>
   </div>
 );
 
@@ -67,33 +72,33 @@ const CoachBlock = ({ coach }) => {
   if (!coach) return null;
   const s = coach.scores || {};
   return (
-    <div className="mt-3 p-3 bg-[#0A1628] border border-[#D4AF37]/30 rounded-sm">
-      <div className="flex items-center gap-2 mb-3">
-        <Sparkles className="w-4 h-4 text-[#D4AF37]" />
-        <h4 className="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">
+    <div className="mt-3 p-4 bg-[#0A1628] border border-[#D4AF37]/30 rounded-sm">
+      <div className="flex items-center gap-2 mb-4">
+        <Sparkles className="w-5 h-5 text-[#D4AF37]" />
+        <h4 className="text-sm font-bold text-[#D4AF37] uppercase tracking-wider">
           AI Coach Feedback
         </h4>
-        <span className="ml-auto text-xs font-mono text-white">
-          Overall: <span className="text-[#D4AF37] font-bold">{coach.overall_score}/10</span>
+        <span className="ml-auto text-sm font-mono text-white">
+          Overall: <span className="text-[#D4AF37] font-bold text-lg">{coach.overall_score}/10</span>
         </span>
       </div>
-      <div className="grid grid-cols-2 gap-3 mb-3">
+      <div className="grid grid-cols-2 gap-4 mb-4">
         <ScorePill label="Setup Quality" score={s.setup_quality ?? 0} />
         <ScorePill label="Entry Execution" score={s.entry_execution ?? 0} />
         <ScorePill label="Risk Management" score={s.risk_management ?? 0} />
         <ScorePill label="Patience / Discipline" score={s.patience_discipline ?? 0} />
       </div>
-      <div className="space-y-2 text-xs">
-        <div>
-          <span className="text-emerald-400 font-semibold">✓ What you did well: </span>
+      <div className="space-y-3 text-sm">
+        <div className="bg-emerald-500/10 border border-emerald-500/20 p-3 rounded-sm">
+          <span className="text-emerald-400 font-semibold block mb-1">✓ What you did well: </span>
           <span className="text-[#CBD5E1]">{coach.what_you_did_well}</span>
         </div>
-        <div>
-          <span className="text-amber-400 font-semibold">⚠ Areas to improve: </span>
+        <div className="bg-amber-500/10 border border-amber-500/20 p-3 rounded-sm">
+          <span className="text-amber-400 font-semibold block mb-1">⚠ Areas to improve: </span>
           <span className="text-[#CBD5E1]">{coach.areas_to_improve}</span>
         </div>
-        <div>
-          <span className="text-[#D4AF37] font-semibold">★ Key lesson: </span>
+        <div className="bg-[#D4AF37]/10 border border-[#D4AF37]/20 p-3 rounded-sm">
+          <span className="text-[#D4AF37] font-semibold block mb-1">★ Key lesson: </span>
           <span className="text-[#CBD5E1]">{coach.key_lesson}</span>
         </div>
       </div>
@@ -101,59 +106,57 @@ const CoachBlock = ({ coach }) => {
   );
 };
 
-// ============== Inline Log Form (replaces modal) ==============
+// ============== Inline Log Form ==============
 const LogTradeForm = ({ instruments, verdicts, prefill, onCreated, onClearPrefill }) => {
   const blank = () => {
-    const inst = "EUR/USD";
-    const live = instruments.find((i) => i.symbol === inst)?.price;
-    const dec = decimalsFor(inst);
-    const entry = live ?? "";
     return {
-      instrument: inst,
+      instrument: "EUR/USD",
       direction: "LONG",
       session: detectSession(),
       entry_model: DEFAULT_MODELS[0],
       entry_zone: "",
-      entry_price: entry ? Number(entry).toFixed(dec) : "",
-      stop_loss: entry ? (entry * 0.995).toFixed(dec) : "",
-      take_profit: entry ? (entry * 1.01).toFixed(dec) : "",
+      entry_price: "",
+      stop_loss: "",
+      take_profit: "",
       position_size: 1,
       risk_amount: "",
       notes: "",
+      strategy_tags: "",
+      chart_url: "",
     };
   };
 
   const [f, setF] = useState(blank);
   const [saving, setSaving] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
-
-  // Re-init when instruments first load
-  useEffect(() => {
-    if (instruments.length > 0 && !f.entry_price) {
-      setF(blank());
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [instruments.length]);
+  const [showRiskCalc, setShowRiskCalc] = useState(false);
 
   // Apply prefill from AI verdict (URL param)
   useEffect(() => {
     if (!prefill) return;
-    const dec = decimalsFor(prefill.instrument);
-    const live = instruments.find((i) => i.symbol === prefill.instrument)?.price;
-    const dir = prefill.direction || "LONG";
-    const entry = prefill.entry_price ?? live ?? 0;
-    const sl = prefill.stop_loss ?? (dir === "LONG" ? entry * 0.995 : entry * 1.005);
-    const tp = prefill.take_profit ?? (dir === "LONG" ? entry * 1.01 : entry * 0.99);
+    const dec = decimalsFor(prefill.instrument || prefill.symbol);
+    const dir = prefill.direction || (prefill.action === "SELL" ? "SHORT" : "LONG");
+    
+    // Check if prefill contains verdict format (from verdicts array) or direct format
+    const levels = prefill.key_levels || prefill.verdict?.key_levels || {};
+    const entry = levels.entry || prefill.entry_price || prefill.price_at_verdict || 0;
+    
+    const sl = levels.stop_loss || prefill.stop_loss || (dir === "LONG" ? entry * 0.995 : entry * 1.005);
+    const tp = levels.take_profit || prefill.take_profit || (dir === "LONG" ? entry * 1.01 : entry * 0.99);
+    
+    const reasoning = prefill.reasoning || prefill.verdict?.reasoning || "";
+    const bias = prefill.bias || prefill.verdict?.bias || prefill.action || prefill.verdict?.action || dir;
+
     setF({
       ...blank(),
-      instrument: prefill.instrument,
+      instrument: prefill.symbol || prefill.instrument,
       direction: dir,
-      entry_model: prefill.entry_model || DEFAULT_MODELS[0],
-      entry_zone: prefill.entry_zone || "",
+      entry_model: `AI: ${bias}`,
+      entry_zone: reasoning ? reasoning.slice(0, 80) : "",
       entry_price: entry ? Number(entry).toFixed(dec) : "",
       stop_loss: sl ? Number(sl).toFixed(dec) : "",
       take_profit: tp ? Number(tp).toFixed(dec) : "",
-      notes: prefill.notes || "",
+      notes: prefill.notes || `AI verdict: ${reasoning}`.trim(),
     });
     setDetailsOpen(true);
     // Scroll to form
@@ -233,10 +236,20 @@ const LogTradeForm = ({ instruments, verdicts, prefill, onCreated, onClearPrefil
     toast.success(`Filled from ${ver.action} ${v.symbol}`);
   };
 
-  // Live RR
+  // Live RR and Impact calculations
   const e = parseFloat(f.entry_price);
   const sl = parseFloat(f.stop_loss);
   const tp = parseFloat(f.take_profit);
+  const posSize = parseFloat(f.position_size) || 0;
+  
+  const pipMult = f.instrument?.includes("JPY") ? 100 : decimals === 5 ? 10000 : 1;
+  const pipDistance = (e && sl) ? Math.abs(e - sl) * pipMult : 0;
+  
+  // Simplified pip value calculation ($10 per pip per standard lot for majors)
+  // This is a rough estimation for UX purposes
+  const estPipValue = posSize * 10; 
+  const dollarRisk = pipDistance * estPipValue;
+
   const rr = (() => {
     if (![e, sl, tp].every(Number.isFinite)) return null;
     const risk = Math.abs(e - sl);
@@ -246,7 +259,7 @@ const LogTradeForm = ({ instruments, verdicts, prefill, onCreated, onClearPrefil
       risk,
       reward,
       ratio: reward / risk,
-      pipMult: f.instrument === "USD/JPY" ? 100 : decimals === 5 ? 10000 : 1,
+      pipMult,
     };
   })();
 
@@ -259,6 +272,11 @@ const LogTradeForm = ({ instruments, verdicts, prefill, onCreated, onClearPrefil
   const submit = async () => {
     setSaving(true);
     try {
+      // Split and clean tags
+      const parsedTags = f.strategy_tags
+        ? f.strategy_tags.split(",").map(t => t.trim()).filter(t => t.length > 0)
+        : [];
+
       const payload = {
         instrument: f.instrument,
         direction: f.direction,
@@ -268,16 +286,18 @@ const LogTradeForm = ({ instruments, verdicts, prefill, onCreated, onClearPrefil
         entry_price: e,
         stop_loss: sl,
         take_profit: Number.isFinite(tp) ? tp : f.direction === "LONG" ? e * 1.01 : e * 0.99,
-        position_size: Number(f.position_size) || 1,
-        risk_amount: f.risk_amount ? Number(f.risk_amount) : null,
+        position_size: posSize || 1,
+        risk_amount: f.risk_amount ? Number(f.risk_amount) : dollarRisk,
         notes: f.notes || null,
+        strategy_tags: parsedTags,
+        chart_url: f.chart_url || null,
       };
+      
       const resp = await tradeAPI.createTrade(payload);
       toast.success(`${f.direction} ${f.instrument} logged`, {
         description: `Entry ${e} · SL ${sl}${rr ? ` · 1:${rr.ratio.toFixed(2)} RR` : ""}`,
       });
       onCreated(resp?.data);
-      // Reset form to a fresh blank state (with new live prices)
       setF(blank());
       setDetailsOpen(false);
     } catch (err) {
@@ -291,36 +311,35 @@ const LogTradeForm = ({ instruments, verdicts, prefill, onCreated, onClearPrefil
 
   return (
     <div className="eli-card border-[#D4AF37]/40" data-testid="log-trade-form">
-      <div className="px-5 py-3 border-b border-[#1E3A5F] flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <BookOpen className="w-4 h-4 text-[#D4AF37]" />
-          <h2 className="text-sm font-bold text-white uppercase tracking-wider">Log New Trade</h2>
+      <div className="px-6 py-4 border-b border-[#1E3A5F] flex items-center justify-between bg-[#0A1628]">
+        <div className="flex items-center gap-3">
+          <BookOpen className="w-5 h-5 text-[#D4AF37]" />
+          <h2 className="font-bold text-white tracking-wider">Log New Trade</h2>
         </div>
         {live != null && (
-          <div className="flex items-center gap-1.5 text-xs text-[#94A3B8] font-mono">
-            <Activity className="w-3 h-3 text-emerald-400 animate-pulse" />
-            {f.instrument} <span className="text-emerald-400">{Number(live).toFixed(decimals)}</span>
+          <div className="flex items-center gap-2 text-sm text-[#94A3B8] font-mono bg-[#1E3A5F]/30 px-3 py-1 rounded-full border border-[#1E3A5F]">
+            <Activity className="w-4 h-4 text-emerald-400 animate-pulse" />
+            {f.instrument} <span className="text-emerald-400 font-bold">{Number(live).toFixed(decimals)}</span>
           </div>
         )}
       </div>
 
-      <div className="p-5 space-y-4">
+      <div className="p-6 space-y-5">
         {/* AI verdict quick-fill */}
         {buyVerdicts.length > 0 && (
           <div className="flex items-center gap-2 flex-wrap" data-testid="verdict-chips">
-            <span className="text-[10px] font-bold text-[#D4AF37] uppercase tracking-wider flex items-center gap-1">
+            <span className="text-[10px] font-bold text-[#D4AF37] uppercase tracking-wider flex items-center gap-1 bg-[#D4AF37]/10 px-2 py-1 rounded-sm border border-[#D4AF37]/30">
               <Sparkles className="w-3 h-3" /> AI Setups
             </span>
             {buyVerdicts.map((v) => (
               <button
                 key={v.symbol}
                 onClick={() => applyVerdict(v)}
-                className={`px-2 py-1 text-[10px] font-bold rounded-sm border ${
+                className={`px-3 py-1 text-xs font-bold rounded-sm border ${
                   v.verdict.action === "BUY"
                     ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/40 hover:bg-emerald-500/20"
                     : "bg-red-500/10 text-red-400 border-red-500/40 hover:bg-red-500/20"
                 }`}
-                data-testid={`verdict-chip-${v.symbol.replace(/[\\/ &]/g, "_")}`}
               >
                 {v.verdict.action} {v.symbol}
               </button>
@@ -329,14 +348,13 @@ const LogTradeForm = ({ instruments, verdicts, prefill, onCreated, onClearPrefil
         )}
 
         {/* Row 1: Instrument · Direction · Entry */}
-        <div className="grid grid-cols-1 md:grid-cols-[1.2fr_1fr_1.5fr] gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_1.5fr] gap-4">
           <div>
-            <label className="block text-[10px] uppercase tracking-wider text-[#94A3B8] mb-1">Instrument</label>
+            <label className="block text-xs uppercase tracking-wider text-[#94A3B8] mb-1.5">Instrument</label>
             <select
               value={f.instrument}
               onChange={(ev) => handleInst(ev.target.value)}
-              className="w-full px-3 py-2.5 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50"
-              data-testid="form-instrument"
+              className="w-full px-4 py-3 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50"
             >
               {instruments.map((i) => (
                 <option key={i.symbol} value={i.symbol}>{i.symbol}</option>
@@ -344,98 +362,93 @@ const LogTradeForm = ({ instruments, verdicts, prefill, onCreated, onClearPrefil
             </select>
           </div>
           <div>
-            <label className="block text-[10px] uppercase tracking-wider text-[#94A3B8] mb-1">Direction</label>
-            <div className="grid grid-cols-2 gap-1">
+            <label className="block text-xs uppercase tracking-wider text-[#94A3B8] mb-1.5">Direction</label>
+            <div className="grid grid-cols-2 gap-2">
               {DIRECTIONS.map((d) => (
                 <button
                   key={d}
                   type="button"
                   onClick={() => handleDir(d)}
-                  className={`px-3 py-2.5 text-xs font-bold rounded-sm border transition-colors ${
+                  className={`py-3 text-sm font-bold rounded-sm border transition-colors ${
                     f.direction === d
                       ? d === "LONG"
                         ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/50"
                         : "bg-red-500/20 text-red-400 border-red-500/50"
                       : "bg-[#1E3A5F]/40 text-[#94A3B8] border-[#1E3A5F]"
                   }`}
-                  data-testid={`form-dir-${d}`}
                 >
-                  {d === "LONG" ? <TrendingUp className="inline w-3 h-3 mr-1" /> : <TrendingDown className="inline w-3 h-3 mr-1" />}
+                  {d === "LONG" ? <TrendingUp className="inline w-4 h-4 mr-1.5" /> : <TrendingDown className="inline w-4 h-4 mr-1.5" />}
                   {d}
                 </button>
               ))}
             </div>
           </div>
           <div>
-            <label className="block text-[10px] uppercase tracking-wider text-[#94A3B8] mb-1">Entry Price</label>
-            <div className="flex gap-1">
+            <label className="block text-xs uppercase tracking-wider text-[#94A3B8] mb-1.5">Entry Price</label>
+            <div className="flex gap-2">
               <input
                 type="number"
                 step="any"
                 value={f.entry_price}
                 onChange={(ev) => setF({ ...f, entry_price: ev.target.value })}
                 placeholder="0.00000"
-                className="flex-1 px-3 py-2.5 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50"
-                data-testid="form-entry"
+                className="flex-1 px-4 py-3 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white font-mono focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50"
               />
               <button
                 type="button"
                 onClick={snap}
                 disabled={live == null}
                 title="Snap to live price"
-                className="px-2.5 bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 text-[#D4AF37] rounded-sm border border-[#D4AF37]/40 disabled:opacity-30"
-                data-testid="form-snap"
+                className="px-4 bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 text-[#D4AF37] rounded-sm border border-[#D4AF37]/40 disabled:opacity-30"
               >
-                <Zap className="w-4 h-4" />
+                <Zap className="w-5 h-5" />
               </button>
             </div>
           </div>
         </div>
 
         {/* Row 2: SL · TP · RR */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-[10px] uppercase tracking-wider text-red-400 mb-1">Stop Loss</label>
+            <label className="block text-xs uppercase tracking-wider text-red-400 mb-1.5">Stop Loss</label>
             <input
               type="number"
               step="any"
               value={f.stop_loss}
               onChange={(ev) => setF({ ...f, stop_loss: ev.target.value })}
               placeholder="0.00000"
-              className="w-full px-3 py-2.5 bg-[#1E3A5F]/40 border border-red-500/30 rounded-sm text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50"
-              data-testid="form-sl"
+              className="w-full px-4 py-3 bg-[#1E3A5F]/40 border border-red-500/30 rounded-sm text-white font-mono focus:outline-none focus:ring-2 focus:ring-red-500/50"
             />
           </div>
           <div>
-            <label className="block text-[10px] uppercase tracking-wider text-emerald-400 mb-1">Take Profit</label>
+            <label className="block text-xs uppercase tracking-wider text-emerald-400 mb-1.5">Take Profit</label>
             <input
               type="number"
               step="any"
               value={f.take_profit}
               onChange={(ev) => setF({ ...f, take_profit: ev.target.value })}
               placeholder="0.00000"
-              className="w-full px-3 py-2.5 bg-[#1E3A5F]/40 border border-emerald-500/30 rounded-sm text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-              data-testid="form-tp"
+              className="w-full px-4 py-3 bg-[#1E3A5F]/40 border border-emerald-500/30 rounded-sm text-white font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
             />
           </div>
           <div className="flex flex-col">
-            <label className="block text-[10px] uppercase tracking-wider text-[#D4AF37] mb-1 flex items-center gap-1">
-              <Target className="w-3 h-3" /> Risk : Reward
+            <label className="block text-xs uppercase tracking-wider text-[#D4AF37] mb-1.5 flex items-center gap-1.5">
+              <Target className="w-4 h-4" /> Risk : Reward
             </label>
-            <div className="flex-1 bg-[#0A1628] border border-[#D4AF37]/30 rounded-sm px-3 py-2 flex items-center justify-between" data-testid="form-rr">
+            <div className="flex-1 bg-[#0A1628] border border-[#D4AF37]/30 rounded-sm px-4 py-3 flex items-center justify-between">
               {rr ? (
                 <>
-                  <div className="text-xs">
+                  <div className="text-sm">
                     <span className="text-red-400 font-mono">
-                      {decimals === 5 ? `${(rr.risk * rr.pipMult).toFixed(0)}p` : rr.risk.toFixed(decimals)}
+                      {decimals === 5 ? `${(rr.risk * rr.pipMult).toFixed(1)}p` : rr.risk.toFixed(decimals)}
                     </span>
-                    <span className="text-[#94A3B8] mx-1">→</span>
+                    <span className="text-[#94A3B8] mx-2">→</span>
                     <span className="text-emerald-400 font-mono">
-                      {decimals === 5 ? `${(rr.reward * rr.pipMult).toFixed(0)}p` : rr.reward.toFixed(decimals)}
+                      {decimals === 5 ? `${(rr.reward * rr.pipMult).toFixed(1)}p` : rr.reward.toFixed(decimals)}
                     </span>
                   </div>
                   <span
-                    className={`font-mono font-bold ${
+                    className={`font-mono font-bold text-lg ${
                       rr.ratio >= 2 ? "text-emerald-400" : rr.ratio >= 1 ? "text-amber-400" : "text-red-400"
                     }`}
                   >
@@ -443,43 +456,85 @@ const LogTradeForm = ({ instruments, verdicts, prefill, onCreated, onClearPrefil
                   </span>
                 </>
               ) : (
-                <span className="text-xs text-[#94A3B8]">Fill entry + SL + TP</span>
+                <span className="text-sm text-[#94A3B8]">Fill entry + SL + TP</span>
               )}
             </div>
           </div>
         </div>
 
+        {/* Row 3: Position Size and Dollar Impact */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs uppercase tracking-wider text-[#94A3B8] mb-1.5">Position Size</label>
+            <input
+              type="number"
+              step="0.01"
+              value={f.position_size}
+              onChange={(ev) => setF({ ...f, position_size: ev.target.value })}
+              className="w-full px-4 py-3 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white font-mono focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label className="block text-xs uppercase tracking-wider text-[#94A3B8] mb-1.5">Dollar Impact ($ Risk)</label>
+            <div className="flex-1 bg-[#1E3A5F]/30 border border-[#1E3A5F] rounded-sm px-4 py-3 flex items-center justify-between text-white font-mono">
+              <div className="flex flex-col">
+                <span className="text-xs text-[#94A3B8] mb-1">~$10/pip per lot approx.</span>
+                <span className="text-lg font-bold text-red-400">
+                   ${dollarRisk > 0 ? dollarRisk.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "0.00"}
+                </span>
+              </div>
+              <div className="text-right flex flex-col">
+                 <span className="text-xs text-[#94A3B8] mb-1">Pip Dist.</span>
+                 <span className="text-white">{pipDistance.toFixed(1)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Risk Calculator Inline Toggle */}
+        <button
+          type="button"
+          onClick={() => setShowRiskCalc(!showRiskCalc)}
+          className="text-sm text-[#D4AF37] hover:text-white flex items-center gap-2 font-semibold"
+        >
+          {showRiskCalc ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          {showRiskCalc ? "Hide" : "Show"} Advanced Risk Calculator
+        </button>
+
+        {showRiskCalc && (
+          <div className="border border-[#1E3A5F] rounded-sm p-4 bg-[#0A1628]/50">
+            <RiskCalculator inline={true} />
+          </div>
+        )}
+
         {/* Details collapser */}
         <button
           type="button"
           onClick={() => setDetailsOpen(!detailsOpen)}
-          className="flex items-center gap-1.5 text-xs text-[#D4AF37] hover:text-[#F4C430] font-semibold"
-          data-testid="form-details-toggle"
+          className="flex items-center gap-1.5 text-sm text-[#D4AF37] hover:text-white font-semibold pt-2 border-t border-[#1E3A5F]/50 w-full"
         >
-          {detailsOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-          {detailsOpen ? "Hide" : "Show"} session, model, notes
+          {detailsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          {detailsOpen ? "Hide" : "Show"} advanced details (tags, chart, session, notes)
         </button>
 
         {detailsOpen && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t border-[#1E3A5F]" data-testid="form-details">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-[#1E3A5F]">
             <div>
-              <label className="block text-[10px] uppercase tracking-wider text-[#94A3B8] mb-1">Session</label>
+              <label className="block text-xs uppercase tracking-wider text-[#94A3B8] mb-1.5">Session</label>
               <select
                 value={f.session}
                 onChange={(ev) => setF({ ...f, session: ev.target.value })}
-                className="w-full px-3 py-2 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white text-sm"
-                data-testid="form-session"
+                className="w-full px-4 py-3 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white"
               >
                 {SESSIONS.map((s) => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-[10px] uppercase tracking-wider text-[#94A3B8] mb-1">Entry Model</label>
+              <label className="block text-xs uppercase tracking-wider text-[#94A3B8] mb-1.5">Entry Model</label>
               <select
                 value={f.entry_model}
                 onChange={(ev) => setF({ ...f, entry_model: ev.target.value })}
-                className="w-full px-3 py-2 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white text-sm"
-                data-testid="form-model"
+                className="w-full px-4 py-3 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white"
               >
                 {DEFAULT_MODELS.map((m) => <option key={m} value={m}>{m}</option>)}
                 {!DEFAULT_MODELS.includes(f.entry_model) && (
@@ -487,49 +542,51 @@ const LogTradeForm = ({ instruments, verdicts, prefill, onCreated, onClearPrefil
                 )}
               </select>
             </div>
-            <div>
-              <label className="block text-[10px] uppercase tracking-wider text-[#94A3B8] mb-1">Position Size</label>
-              <input
-                type="number"
-                step="any"
-                value={f.position_size}
-                onChange={(ev) => setF({ ...f, position_size: ev.target.value })}
-                className="w-full px-3 py-2 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white font-mono text-sm"
-                data-testid="form-size"
-              />
-            </div>
-            <div>
-              <label className="block text-[10px] uppercase tracking-wider text-[#94A3B8] mb-1">Risk Amount ($)</label>
-              <input
-                type="number"
-                step="any"
-                value={f.risk_amount}
-                onChange={(ev) => setF({ ...f, risk_amount: ev.target.value })}
-                placeholder="optional"
-                className="w-full px-3 py-2 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white font-mono text-sm"
-                data-testid="form-risk"
-              />
-            </div>
+            
             <div className="md:col-span-2">
-              <label className="block text-[10px] uppercase tracking-wider text-[#94A3B8] mb-1">Entry Zone (POI / Timeframe)</label>
+              <label className="block text-xs uppercase tracking-wider text-[#94A3B8] mb-1.5 flex items-center gap-1">
+                <Tag className="w-3.5 h-3.5" /> Strategy Tags (comma separated)
+              </label>
+              <input
+                type="text"
+                value={f.strategy_tags}
+                onChange={(ev) => setF({ ...f, strategy_tags: ev.target.value })}
+                placeholder="e.g. Trend Continuation, Counter Trend, News Play"
+                className="w-full px-4 py-3 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white"
+              />
+            </div>
+            
+            <div className="md:col-span-2">
+              <label className="block text-xs uppercase tracking-wider text-[#94A3B8] mb-1.5 flex items-center gap-1">
+                <LinkIcon className="w-3.5 h-3.5" /> Chart URL
+              </label>
+              <input
+                type="url"
+                value={f.chart_url}
+                onChange={(ev) => setF({ ...f, chart_url: ev.target.value })}
+                placeholder="https://tradingview.com/..."
+                className="w-full px-4 py-3 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white"
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-xs uppercase tracking-wider text-[#94A3B8] mb-1.5">Entry Zone (POI / Timeframe)</label>
               <input
                 type="text"
                 value={f.entry_zone}
                 onChange={(ev) => setF({ ...f, entry_zone: ev.target.value })}
                 placeholder="e.g. Premium OB on H1"
-                className="w-full px-3 py-2 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white text-sm"
-                data-testid="form-zone"
+                className="w-full px-4 py-3 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white"
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-[10px] uppercase tracking-wider text-[#94A3B8] mb-1">Notes</label>
+              <label className="block text-xs uppercase tracking-wider text-[#94A3B8] mb-1.5">Notes</label>
               <textarea
                 value={f.notes}
                 onChange={(ev) => setF({ ...f, notes: ev.target.value })}
                 rows={3}
                 placeholder="Reason for entry, market context, mental state..."
-                className="w-full px-3 py-2 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white text-sm"
-                data-testid="form-notes"
+                className="w-full px-4 py-3 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white"
               />
             </div>
           </div>
@@ -538,8 +595,7 @@ const LogTradeForm = ({ instruments, verdicts, prefill, onCreated, onClearPrefil
         <button
           onClick={submit}
           disabled={!canSave}
-          className="w-full px-6 py-3 bg-[#D4AF37] hover:bg-[#F4C430] text-[#0A1628] font-bold text-sm rounded-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          data-testid="form-save"
+          className="w-full px-6 py-4 bg-[#D4AF37] hover:bg-[#F4C430] text-[#0A1628] font-bold text-lg rounded-sm disabled:opacity-50 transition-colors shadow-lg shadow-[#D4AF37]/20"
         >
           {saving
             ? "Logging..."
@@ -557,10 +613,10 @@ const LogTradeForm = ({ instruments, verdicts, prefill, onCreated, onClearPrefil
 };
 
 // ============== Trade row ==============
-const TradeRow = ({ trade, onClose, onScore, scoringId, highlight }) => {
+const TradeRow = ({ trade, onClose, onScore, onDelete, scoringId, highlight }) => {
   const [showClose, setShowClose] = useState(false);
   const [exitPrice, setExit] = useState("");
-  const pnl = trade.profit_loss;
+  const pnl = trade.profit_loss || 0;
   const isOpen = trade.status === "OPEN";
   const dec = decimalsFor(trade.instrument);
 
@@ -572,85 +628,110 @@ const TradeRow = ({ trade, onClose, onScore, scoringId, highlight }) => {
 
   return (
     <div
-      className={`eli-card p-4 transition-all duration-500 ${
+      className={`eli-card p-5 transition-all duration-500 ${
         highlight ? "border-[#D4AF37] shadow-[0_0_0_2px_rgba(212,175,55,0.3)] bg-[#D4AF37]/5" : ""
       }`}
-      data-testid={`trade-${trade.id}`}
     >
-      <div className="flex items-start justify-between mb-3 flex-wrap gap-2">
+      <div className="flex items-start justify-between mb-4 flex-wrap gap-3">
         <div className="flex items-center gap-3 flex-wrap">
           <span
-            className={`px-2 py-0.5 text-[10px] font-bold border rounded-sm tracking-wider ${
+            className={`px-2 py-1 text-xs font-bold border rounded-sm tracking-wider flex items-center ${
               trade.direction === "LONG"
                 ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/40"
                 : "bg-red-500/15 text-red-400 border-red-500/40"
             }`}
           >
             {trade.direction === "LONG" ? (
-              <TrendingUp className="inline w-3 h-3 mr-1" />
+              <TrendingUp className="inline w-3.5 h-3.5 mr-1" />
             ) : (
-              <TrendingDown className="inline w-3 h-3 mr-1" />
+              <TrendingDown className="inline w-3.5 h-3.5 mr-1" />
             )}
             {trade.direction}
           </span>
-          <span className="font-mono font-bold text-white">{trade.instrument}</span>
-          <span className="text-xs text-[#94A3B8]">{trade.session}</span>
-          <span className="text-xs text-[#D4AF37]">{trade.entry_model}</span>
+          <span className="font-mono text-lg font-bold text-white">{trade.instrument}</span>
+          <span className="text-xs text-[#94A3B8] px-2 py-1 bg-[#1E3A5F]/50 rounded-sm">{trade.session}</span>
+          <span className="text-xs text-[#D4AF37] px-2 py-1 bg-[#D4AF37]/10 rounded-sm">{trade.entry_model}</span>
         </div>
-        <span
-          className={`px-2 py-0.5 text-[10px] font-bold rounded-sm ${
-            isOpen
-              ? "bg-blue-500/15 text-blue-400 border border-blue-500/40"
+        
+        <div className="flex items-center gap-3">
+          <span
+            className={`px-3 py-1 text-xs font-bold rounded-sm ${
+              isOpen
+                ? "bg-blue-500/15 text-blue-400 border border-blue-500/40"
+                : pnl > 0
+                ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/40"
+                : pnl < 0
+                ? "bg-red-500/15 text-red-400 border border-red-500/40"
+                : "bg-amber-500/15 text-amber-400 border border-amber-500/40"
+            }`}
+          >
+            {isOpen
+              ? "OPEN"
               : pnl > 0
-              ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/40"
+              ? `WIN +$${pnl.toFixed(2)}`
               : pnl < 0
-              ? "bg-red-500/15 text-red-400 border border-red-500/40"
-              : "bg-amber-500/15 text-amber-400 border border-amber-500/40"
-          }`}
-        >
-          {isOpen
-            ? "OPEN"
-            : pnl > 0
-            ? `WIN +$${pnl}`
-            : pnl < 0
-            ? `LOSS $${pnl}`
-            : "BREAK-EVEN"}
-        </span>
+              ? `LOSS $${pnl.toFixed(2)}`
+              : "BREAK-EVEN"}
+          </span>
+          <button 
+            onClick={() => onDelete(trade.id)}
+            className="text-red-400/50 hover:text-red-400 transition-colors p-1"
+            title="Delete Trade"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm bg-[#0A1628] p-4 rounded-sm border border-[#1E3A5F]/50 mb-3">
         <div>
-          <span className="text-[#94A3B8]">Entry: </span>
-          <span className="font-mono text-white">{trade.entry_price?.toFixed(dec)}</span>
+          <span className="text-[#94A3B8] block text-[10px] uppercase mb-1">Entry Price</span>
+          <span className="font-mono text-white text-base">{trade.entry_price?.toFixed(dec)}</span>
         </div>
         <div>
-          <span className="text-[#94A3B8]">SL: </span>
-          <span className="font-mono text-red-300">{trade.stop_loss?.toFixed(dec)}</span>
+          <span className="text-[#94A3B8] block text-[10px] uppercase mb-1">Stop Loss</span>
+          <span className="font-mono text-red-400 text-base">{trade.stop_loss?.toFixed(dec)}</span>
         </div>
         <div>
-          <span className="text-[#94A3B8]">TP: </span>
-          <span className="font-mono text-emerald-300">{trade.take_profit?.toFixed(dec)}</span>
+          <span className="text-[#94A3B8] block text-[10px] uppercase mb-1">Take Profit</span>
+          <span className="font-mono text-emerald-400 text-base">{trade.take_profit?.toFixed(dec)}</span>
         </div>
         <div>
-          <span className="text-[#94A3B8]">Size: </span>
-          <span className="font-mono text-white">{trade.position_size}</span>
+          <span className="text-[#94A3B8] block text-[10px] uppercase mb-1">Position Size</span>
+          <span className="font-mono text-white text-base">{trade.position_size}</span>
         </div>
       </div>
+
+      {(trade.strategy_tags?.length > 0 || trade.chart_url) && (
+        <div className="flex flex-wrap items-center gap-3 mt-3 mb-2">
+          {trade.strategy_tags?.map(tag => (
+            <span key={tag} className="text-[10px] px-2 py-0.5 bg-[#1E3A5F] text-[#CBD5E1] rounded-sm flex items-center gap-1">
+              <Tag className="w-3 h-3 text-[#94A3B8]" /> {tag}
+            </span>
+          ))}
+          {trade.chart_url && (
+            <a href={trade.chart_url} target="_blank" rel="noopener noreferrer" className="text-[10px] px-2 py-0.5 bg-[#D4AF37]/10 text-[#D4AF37] hover:bg-[#D4AF37]/20 border border-[#D4AF37]/30 rounded-sm flex items-center gap-1 transition-colors">
+              <LinkIcon className="w-3 h-3" /> View Chart
+            </a>
+          )}
+        </div>
+      )}
 
       {trade.entry_zone && (
-        <p className="text-xs text-[#94A3B8] mt-2">
-          <span className="text-[#D4AF37] uppercase tracking-wider mr-1">POI:</span>
+        <p className="text-sm text-[#94A3B8] mt-2">
+          <span className="text-[#D4AF37] uppercase tracking-wider mr-2 text-[10px] font-bold">POI:</span>
           {trade.entry_zone}
         </p>
       )}
-      {trade.notes && <p className="text-xs text-[#CBD5E1] mt-2 italic">"{trade.notes}"</p>}
+      
+      {trade.notes && <p className="text-sm text-[#CBD5E1] mt-2 italic border-l-2 border-[#1E3A5F] pl-3 py-1">"{trade.notes}"</p>}
 
       {isOpen && (
-        <div className="mt-3 pt-3 border-t border-[#1E3A5F]">
+        <div className="mt-4 pt-4 border-t border-[#1E3A5F]">
           {showClose ? (
-            <div className="flex gap-2 items-end">
+            <div className="flex gap-3 items-end bg-[#0A1628] p-3 border border-[#1E3A5F] rounded-sm">
               <div className="flex-1">
-                <label className="block text-[10px] text-[#94A3B8] uppercase tracking-wider mb-1">
+                <label className="block text-[10px] text-[#94A3B8] uppercase tracking-wider mb-1.5">
                   Exit Price
                 </label>
                 <input
@@ -659,29 +740,26 @@ const TradeRow = ({ trade, onClose, onScore, scoringId, highlight }) => {
                   value={exitPrice}
                   onChange={(ev) => setExit(ev.target.value)}
                   placeholder={trade.entry_price?.toFixed(dec)}
-                  className="w-full px-3 py-1.5 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white font-mono text-sm"
-                  data-testid={`close-exit-${trade.id}`}
+                  className="w-full px-3 py-2 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white font-mono text-sm"
                 />
               </div>
               <button
                 onClick={handleClose}
                 disabled={!exitPrice}
-                className="px-4 py-1.5 bg-[#D4AF37] text-[#0A1628] text-sm font-bold rounded-sm disabled:opacity-50"
-                data-testid={`confirm-close-${trade.id}`}
+                className="px-5 py-2 bg-[#D4AF37] text-[#0A1628] font-bold rounded-sm disabled:opacity-50 hover:bg-[#F4C430] transition-colors"
               >
-                Close
+                Confirm Close
               </button>
-              <button onClick={() => setShowClose(false)} className="px-3 py-1.5 text-sm text-[#94A3B8]">
+              <button onClick={() => setShowClose(false)} className="px-4 py-2 text-sm text-[#94A3B8] hover:text-white">
                 Cancel
               </button>
             </div>
           ) : (
             <button
               onClick={() => setShowClose(true)}
-              className="text-xs text-[#D4AF37] hover:text-[#F4C430] flex items-center gap-1"
-              data-testid={`close-btn-${trade.id}`}
+              className="text-sm px-4 py-2 bg-[#1E3A5F]/50 text-white hover:bg-[#1E3A5F] rounded-sm flex items-center gap-2 border border-[#1E3A5F]"
             >
-              <CheckCircle2 className="w-3 h-3" /> Close Trade
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Close Trade
             </button>
           )}
         </div>
@@ -689,20 +767,19 @@ const TradeRow = ({ trade, onClose, onScore, scoringId, highlight }) => {
 
       {!isOpen && (
         <>
-          <div className="mt-3 pt-3 border-t border-[#1E3A5F] flex items-center justify-between gap-2 flex-wrap">
-            <div className="text-xs">
-              <span className="text-[#94A3B8]">Exit: </span>
-              <span className="font-mono text-white">{trade.exit_price?.toFixed(dec)}</span>
+          <div className="mt-4 pt-4 border-t border-[#1E3A5F] flex items-center justify-between gap-2 flex-wrap">
+            <div className="text-sm bg-[#1E3A5F]/30 px-3 py-1.5 rounded-sm border border-[#1E3A5F]">
+              <span className="text-[#94A3B8] mr-2">Exit Price:</span>
+              <span className="font-mono text-white font-bold">{trade.exit_price?.toFixed(dec)}</span>
             </div>
             {!trade.ai_coach && (
               <button
                 onClick={() => onScore(trade.id)}
                 disabled={scoringId === trade.id}
-                className="flex items-center gap-1.5 text-xs text-[#D4AF37] hover:text-[#F4C430] disabled:opacity-50"
-                data-testid={`coach-btn-${trade.id}`}
+                className="flex items-center gap-2 text-sm px-4 py-1.5 bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30 hover:bg-[#D4AF37]/20 rounded-sm transition-colors disabled:opacity-50"
               >
-                <Sparkles className={`w-3 h-3 ${scoringId === trade.id ? "animate-spin" : ""}`} />
-                {scoringId === trade.id ? "Coaching..." : "Get AI Coach feedback"}
+                <Sparkles className={`w-4 h-4 ${scoringId === trade.id ? "animate-spin" : ""}`} />
+                {scoringId === trade.id ? "Analyzing Trade..." : "Get AI Coach Feedback"}
               </button>
             )}
           </div>
@@ -751,16 +828,9 @@ export default function TradeJournal() {
     if (!sym || verdicts.length === 0) return;
     const v = verdicts.find((x) => x.symbol === decodeURIComponent(sym));
     if (!v?.verdict) return;
-    setPrefill({
-      instrument: v.symbol,
-      direction: v.verdict.action === "SELL" ? "SHORT" : "LONG",
-      entry_price: v.verdict.key_levels?.entry,
-      stop_loss: v.verdict.key_levels?.stop_loss,
-      take_profit: v.verdict.key_levels?.take_profit,
-      entry_model: `AI: ${v.verdict.bias || v.verdict.action}`,
-      entry_zone: v.verdict.reasoning ? v.verdict.reasoning.slice(0, 80) : "",
-      notes: `AI verdict (${v.verdict.action} · ${v.verdict.confidence}%): ${v.verdict.reasoning || ""}`.trim(),
-    });
+    
+    setPrefill(v);
+    
     const next = new URLSearchParams(searchParams);
     next.delete("from_verdict");
     setSearchParams(next, { replace: true });
@@ -784,10 +854,21 @@ export default function TradeJournal() {
   const closeTrade = async (id, exit_price) => {
     try {
       await tradeAPI.updateTrade(id, { exit_price, status: "CLOSED" });
-      toast.success("Trade closed");
+      toast.success("Trade closed successfully");
       load();
     } catch (err) {
       toast.error("Failed to close trade");
+    }
+  };
+  
+  const deleteTrade = async (id) => {
+    if (!confirm("Are you sure you want to delete this trade? This cannot be undone.")) return;
+    try {
+      await tradeAPI.deleteTrade(id);
+      toast.success("Trade deleted");
+      load();
+    } catch (e) {
+      toast.error("Failed to delete trade");
     }
   };
 
@@ -795,10 +876,10 @@ export default function TradeJournal() {
     setScoringId(id);
     try {
       await aiAPI.coachScore(id);
-      toast.success("AI Coach completed");
+      toast.success("AI Coach analysis complete");
       load();
     } catch (err) {
-      toast.error("Coach failed");
+      toast.error("AI Coach failed to analyze trade");
     }
     setScoringId(null);
   };
@@ -808,31 +889,76 @@ export default function TradeJournal() {
     try {
       const r = await aiAPI.coachPatterns();
       setPatterns(r.data);
+      toast.success("Pattern analysis complete");
     } catch (err) {
       toast.error("Pattern analysis failed");
     }
     setLoadingPatterns(false);
+  };
+  
+  const exportToCSV = () => {
+    if (!trades || trades.length === 0) {
+      toast.info("No trades to export");
+      return;
+    }
+    
+    const headers = ["ID", "Instrument", "Direction", "Status", "Entry Price", "Stop Loss", "Take Profit", "Exit Price", "P&L", "Session", "Model", "Tags", "Date"];
+    const csvContent = [
+      headers.join(","),
+      ...trades.map(t => [
+        t.id, 
+        t.instrument, 
+        t.direction, 
+        t.status, 
+        t.entry_price, 
+        t.stop_loss, 
+        t.take_profit, 
+        t.exit_price || "", 
+        t.profit_loss || 0,
+        t.session,
+        `"${t.entry_model}"`,
+        `"${t.strategy_tags ? t.strategy_tags.join(';') : ''}"`,
+        t.created_at
+      ].join(","))
+    ].join("\n");
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `trade_journal_export_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const openTrades = trades.filter((t) => t.status === "OPEN");
   const closedTrades = trades.filter((t) => t.status === "CLOSED");
 
   return (
-    <div className="space-y-6" data-testid="journal-page">
-      <div>
-        <div className="flex items-center gap-3">
-          <BookOpen className="w-7 h-7 text-[#D4AF37]" />
-          <h1 className="font-heading text-3xl font-bold text-white">Trade Journal</h1>
+    <div className="space-y-8" data-testid="journal-page">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-3">
+            <BookOpen className="w-8 h-8 text-[#D4AF37]" />
+            <h1 className="font-heading text-4xl font-bold text-white">Trade Journal</h1>
+          </div>
+          <p className="text-[#94A3B8] mt-2">
+            Disciplined trading starts with review. Log and analyze every trade.
+          </p>
         </div>
-        <p className="text-sm text-[#94A3B8] mt-1">
-          Log every trade. AI Coach scores closed trades against your framework.
-        </p>
+        <button 
+          onClick={exportToCSV}
+          className="flex items-center gap-2 px-4 py-2 bg-[#1E3A5F]/50 hover:bg-[#1E3A5F] text-white border border-[#1E3A5F] rounded-sm transition-colors"
+        >
+          <Download className="w-4 h-4" /> Export to CSV
+        </button>
       </div>
 
       {stats && (
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3" data-testid="trade-stats">
-          <Stat label="Total" value={stats.total_trades} />
-          <Stat label="Open" value={stats.open_trades} color="text-blue-400" />
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4" data-testid="trade-stats">
+          <Stat label="Total Trades" value={stats.total_trades} />
+          <Stat label="Open Trades" value={stats.open_trades} color="text-blue-400" />
           <Stat
             label="Win Rate"
             value={`${stats.win_rate}%`}
@@ -840,14 +966,14 @@ export default function TradeJournal() {
           />
           <Stat
             label="Net P/L"
-            value={`${stats.total_profit_loss >= 0 ? "+" : ""}$${stats.total_profit_loss}`}
+            value={`${stats.total_profit_loss >= 0 ? "+" : ""}$${stats.total_profit_loss?.toFixed(2) || "0.00"}`}
             color={stats.total_profit_loss >= 0 ? "text-emerald-400" : "text-red-400"}
           />
-          <Stat label="Best Trade" value={`+$${stats.best_trade}`} color="text-emerald-400" />
+          <Stat label="Avg RR" value={stats.avg_rr?.toFixed(2) || "—"} color="text-emerald-400" />
         </div>
       )}
 
-      {/* INLINE LOG FORM — replaces modal */}
+      {/* Log Trade Form */}
       <LogTradeForm
         instruments={instruments}
         verdicts={verdicts}
@@ -857,105 +983,118 @@ export default function TradeJournal() {
       />
 
       {/* AI Pattern Insight */}
-      <div className="eli-card p-4">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-[#D4AF37]" />
-            <h3 className="text-sm font-semibold text-white">AI Pattern Insight</h3>
+      <div className="eli-card p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+          <div className="flex items-center gap-3">
+            <Sparkles className="w-6 h-6 text-[#D4AF37]" />
+            <h3 className="text-xl font-bold text-white">AI Pattern Insight</h3>
           </div>
           <button
             onClick={runPatterns}
-            disabled={loadingPatterns}
-            className="text-xs text-[#D4AF37] hover:text-[#F4C430] flex items-center gap-1 disabled:opacity-50"
-            data-testid="run-patterns-btn"
+            disabled={loadingPatterns || closedTrades.length === 0}
+            className="px-4 py-2 text-sm bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30 hover:bg-[#D4AF37]/20 rounded-sm flex items-center gap-2 disabled:opacity-50 transition-colors"
           >
-            <Sparkles className={`w-3 h-3 ${loadingPatterns ? "animate-spin" : ""}`} />
-            {loadingPatterns ? "Analysing..." : "Analyse last 10 trades"}
+            <Sparkles className={`w-4 h-4 ${loadingPatterns ? "animate-spin" : ""}`} />
+            {loadingPatterns ? "Analyzing patterns..." : "Analyze Last 10 Trades"}
           </button>
         </div>
+        
         {!patterns ? (
-          <p className="text-xs text-[#94A3B8]">
-            Run pattern insight to detect dominant habits across your last 10 closed trades.
-          </p>
+          <div className="text-center p-6 bg-[#0A1628] border border-[#1E3A5F] rounded-sm">
+            <p className="text-[#94A3B8]">
+              Run pattern insight to detect dominant habits and systematic errors across your last 10 closed trades.
+            </p>
+          </div>
         ) : (
-          <div className="space-y-2 text-sm" data-testid="patterns-output">
-            <p className="text-[#CBD5E1]">{patterns.patterns}</p>
-            {patterns.habits?.length > 0 && (
-              <ul className="list-disc list-inside text-xs text-[#94A3B8] space-y-0.5">
-                {patterns.habits.map((h, idx) => <li key={idx}>{h}</li>)}
-              </ul>
-            )}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-[#0A1628] p-5 border border-[#1E3A5F] rounded-sm">
+            <div className="md:col-span-3">
+              <p className="text-white text-lg">{patterns.patterns}</p>
+            </div>
             {patterns.top_strength && (
-              <p className="text-xs">
-                <span className="text-emerald-400 font-semibold">Strength: </span>
-                <span className="text-[#CBD5E1]">{patterns.top_strength}</span>
-              </p>
+              <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-sm">
+                <span className="text-emerald-400 font-bold block mb-2 uppercase text-xs tracking-wider">Top Strength</span>
+                <span className="text-white">{patterns.top_strength}</span>
+              </div>
             )}
             {patterns.top_weakness && (
-              <p className="text-xs">
-                <span className="text-amber-400 font-semibold">Weakness: </span>
-                <span className="text-[#CBD5E1]">{patterns.top_weakness}</span>
-              </p>
+              <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-sm">
+                <span className="text-amber-400 font-bold block mb-2 uppercase text-xs tracking-wider">Top Weakness</span>
+                <span className="text-white">{patterns.top_weakness}</span>
+              </div>
+            )}
+            {patterns.habits?.length > 0 && (
+              <div className="bg-[#1E3A5F]/30 border border-[#1E3A5F] p-4 rounded-sm md:col-span-1">
+                <span className="text-[#94A3B8] font-bold block mb-2 uppercase text-xs tracking-wider">Observed Habits</span>
+                <ul className="list-disc list-inside text-sm text-[#CBD5E1] space-y-1">
+                  {patterns.habits.map((h, idx) => <li key={idx}>{h}</li>)}
+                </ul>
+              </div>
             )}
           </div>
         )}
       </div>
 
-      {/* Open Positions */}
-      <section data-testid="open-section">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-bold text-[#D4AF37] tracking-wider uppercase flex items-center gap-2">
-            <Activity className="w-4 h-4" /> Open Positions
-            <span className="text-[#94A3B8] font-mono">({openTrades.length})</span>
-          </h2>
-        </div>
-        {openTrades.length === 0 ? (
-          <div className="eli-card p-6 text-center text-sm text-[#94A3B8]">
-            No open positions. Log one above.
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        {/* Open Positions */}
+        <section data-testid="open-section">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-[#D4AF37] tracking-wider uppercase flex items-center gap-2">
+              <Activity className="w-5 h-5" /> Open Positions
+              <span className="text-[#94A3B8] font-mono bg-[#1E3A5F] px-2 py-0.5 rounded-sm text-sm">{openTrades.length}</span>
+            </h2>
           </div>
-        ) : (
-          <div className="space-y-3">
-            {openTrades.map((t) => (
-              <TradeRow
-                key={t.id}
-                trade={t}
-                onClose={closeTrade}
-                onScore={scoreTrade}
-                scoringId={scoringId}
-                highlight={highlightId === t.id}
-              />
-            ))}
-          </div>
-        )}
-      </section>
+          {openTrades.length === 0 ? (
+            <div className="eli-card p-10 text-center flex flex-col items-center justify-center">
+              <Activity className="w-10 h-10 text-[#1E3A5F] mb-3" />
+              <p className="text-[#94A3B8]">No open positions. Log one above.</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {openTrades.map((t) => (
+                <TradeRow
+                  key={t.id}
+                  trade={t}
+                  onClose={closeTrade}
+                  onScore={scoreTrade}
+                  onDelete={deleteTrade}
+                  scoringId={scoringId}
+                  highlight={highlightId === t.id}
+                />
+              ))}
+            </div>
+          )}
+        </section>
 
-      {/* Closed Trades */}
-      <section data-testid="closed-section">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-bold text-[#D4AF37] tracking-wider uppercase flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4" /> Closed Trades
-            <span className="text-[#94A3B8] font-mono">({closedTrades.length})</span>
-          </h2>
-        </div>
-        {closedTrades.length === 0 ? (
-          <div className="eli-card p-6 text-center text-sm text-[#94A3B8]">
-            No closed trades yet. Close one above and the AI Coach will score it.
+        {/* Closed Trades */}
+        <section data-testid="closed-section">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-[#D4AF37] tracking-wider uppercase flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5" /> Closed Trades
+              <span className="text-[#94A3B8] font-mono bg-[#1E3A5F] px-2 py-0.5 rounded-sm text-sm">{closedTrades.length}</span>
+            </h2>
           </div>
-        ) : (
-          <div className="space-y-3">
-            {closedTrades.map((t) => (
-              <TradeRow
-                key={t.id}
-                trade={t}
-                onClose={closeTrade}
-                onScore={scoreTrade}
-                scoringId={scoringId}
-                highlight={highlightId === t.id}
-              />
-            ))}
-          </div>
-        )}
-      </section>
+          {closedTrades.length === 0 ? (
+            <div className="eli-card p-10 text-center flex flex-col items-center justify-center">
+              <CheckCircle2 className="w-10 h-10 text-[#1E3A5F] mb-3" />
+              <p className="text-[#94A3B8]">No closed trades yet.</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {closedTrades.map((t) => (
+                <TradeRow
+                  key={t.id}
+                  trade={t}
+                  onClose={closeTrade}
+                  onScore={scoreTrade}
+                  onDelete={deleteTrade}
+                  scoringId={scoringId}
+                  highlight={highlightId === t.id}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
     </div>
   );
 }

@@ -592,7 +592,7 @@ const LogTradeForm = ({ instruments, verdicts, prefill, onCreated, onClearPrefil
         <button
           onClick={submit}
           disabled={!canSave}
-          className="w-full px-6 py-4 bg-eli-gold hover:bg-eli-gold-bright text-eli-navy font-bold text-lg rounded-sm disabled:opacity-20 transition-colors shadow-lg shadow-eli-gold/20"
+          className="w-full px-6 py-4 bg-eli-gold hover:bg-eli-gold-bright text-eli-navy font-bold text-lg rounded-sm disabled:opacity-50 transition-colors shadow-lg shadow-eli-gold/20"
         >
           {saving
             ? "Logging..."

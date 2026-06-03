@@ -248,7 +248,7 @@ export default function RiskCalculator({ inline = false }) {
           setForm((prev) => ({ ...prev, symbol: firstForex.symbol }));
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const selectedInstrument = instruments.find((i) => i.symbol === form.symbol);
@@ -303,7 +303,7 @@ export default function RiskCalculator({ inline = false }) {
     } catch (err) {
       setError(
         err.response?.data?.detail ||
-          "Calculation failed. Please check inputs.",
+        "Calculation failed. Please check inputs.",
       );
       setResult(null);
     }
@@ -486,7 +486,7 @@ export default function RiskCalculator({ inline = false }) {
                 </div>
                 <div className="p-5 bg-gradient-to-br from-eli-border to-eli-navy-4 rounded-sm">
                   <p className="text-xs text-eli-muted">POSITION SIZE</p>
-                  <p className="text-4xl font-bold text-eli-text-white mt-1">
+                  <p className="text-2xl font-bold text-eli-text-white mt-1">
                     {result.position_size}
                   </p>
                 </div>

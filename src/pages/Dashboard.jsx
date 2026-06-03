@@ -429,7 +429,6 @@ const Pill = ({ children, color = "navy" }) => {
 const InstrumentTile = ({
   inst,
   verdict,
-  onClick,
   onToggleWatchlist,
   isInWatchlist,
 }) => {
@@ -446,8 +445,7 @@ const InstrumentTile = ({
 
   return (
     <div
-      onClick={() => onClick(inst.symbol)}
-      className="eli-card eli-card-hover p-4 animate-fade-in cursor-pointer group relative"
+      className="eli-card eli-card-hover p-4 animate-fade-in group relative"
       data-testid={`tile-${inst.symbol.replace(/[\\/ &]/g, "_")}`}
     >
       <button
@@ -521,7 +519,6 @@ const WatchlistSection = ({
   watchlistSymbols,
   instruments,
   verdicts,
-  onClick,
   onToggleWatchlist,
 }) => {
   const watchlistInstruments = instruments.filter((i) =>
@@ -554,7 +551,6 @@ const WatchlistSection = ({
             key={i.symbol}
             inst={i}
             verdict={verdicts[i.symbol]}
-            onClick={onClick}
             onToggleWatchlist={onToggleWatchlist}
             isInWatchlist={true}
           />
@@ -840,7 +836,7 @@ export default function Dashboard() {
   };
 
   const openAIForSymbol = (symbol) => {
-    navigate(`/ai-engine?symbol=${encodeURIComponent(symbol)}`);
+    navigate(`/signals?symbol=${encodeURIComponent(symbol)}`);
   };
 
   const logTrade = (symbol) => {
@@ -937,7 +933,6 @@ export default function Dashboard() {
         watchlistSymbols={watchlist}
         instruments={instruments}
         verdicts={verdicts}
-        onClick={openAIForSymbol}
         onToggleWatchlist={toggleWatchlist}
       />
 
@@ -952,7 +947,6 @@ export default function Dashboard() {
               key={i.symbol}
               inst={i}
               verdict={verdicts[i.symbol]}
-              onClick={openAIForSymbol}
               onToggleWatchlist={toggleWatchlist}
               isInWatchlist={watchlist.includes(i.symbol)}
             />
@@ -971,7 +965,6 @@ export default function Dashboard() {
               key={i.symbol}
               inst={i}
               verdict={verdicts[i.symbol]}
-              onClick={openAIForSymbol}
               onToggleWatchlist={toggleWatchlist}
               isInWatchlist={watchlist.includes(i.symbol)}
             />
@@ -990,7 +983,6 @@ export default function Dashboard() {
               key={i.symbol}
               inst={i}
               verdict={verdicts[i.symbol]}
-              onClick={openAIForSymbol}
               onToggleWatchlist={toggleWatchlist}
               isInWatchlist={watchlist.includes(i.symbol)}
             />

@@ -431,6 +431,7 @@ const InstrumentTile = ({
   verdict,
   onToggleWatchlist,
   isInWatchlist,
+  onClick,
 }) => {
   const positive = inst.change_percent >= 0;
   const action = verdict?.verdict?.action;
@@ -445,8 +446,9 @@ const InstrumentTile = ({
 
   return (
     <div
-      className="eli-card eli-card-hover p-4 animate-fade-in group relative"
+      className="eli-card eli-card-hover p-4 animate-fade-in group relative cursor-pointer"
       data-testid={`tile-${inst.symbol.replace(/[\\/ &]/g, "_")}`}
+      onClick={() => onClick && onClick(inst.symbol)}
     >
       <button
         onClick={(e) => {
@@ -520,6 +522,7 @@ const WatchlistSection = ({
   instruments,
   verdicts,
   onToggleWatchlist,
+  onTileClick,
 }) => {
   const watchlistInstruments = instruments.filter((i) =>
     watchlistSymbols.includes(i.symbol),
@@ -553,6 +556,7 @@ const WatchlistSection = ({
             verdict={verdicts[i.symbol]}
             onToggleWatchlist={onToggleWatchlist}
             isInWatchlist={true}
+            onClick={onTileClick}
           />
         ))}
       </div>
@@ -934,6 +938,7 @@ export default function Dashboard() {
         instruments={instruments}
         verdicts={verdicts}
         onToggleWatchlist={toggleWatchlist}
+        onTileClick={openAIForSymbol}
       />
 
       {/* Forex */}
@@ -949,6 +954,7 @@ export default function Dashboard() {
               verdict={verdicts[i.symbol]}
               onToggleWatchlist={toggleWatchlist}
               isInWatchlist={watchlist.includes(i.symbol)}
+              onClick={openAIForSymbol}
             />
           ))}
         </div>
@@ -967,6 +973,7 @@ export default function Dashboard() {
               verdict={verdicts[i.symbol]}
               onToggleWatchlist={toggleWatchlist}
               isInWatchlist={watchlist.includes(i.symbol)}
+              onClick={openAIForSymbol}
             />
           ))}
         </div>
@@ -985,6 +992,7 @@ export default function Dashboard() {
               verdict={verdicts[i.symbol]}
               onToggleWatchlist={toggleWatchlist}
               isInWatchlist={watchlist.includes(i.symbol)}
+              onClick={openAIForSymbol}
             />
           ))}
         </div>

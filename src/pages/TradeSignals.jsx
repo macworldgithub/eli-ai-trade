@@ -276,6 +276,7 @@ import {
   Target,
   AlertCircle,
   PlayCircle,
+  ScrollText,
 } from "lucide-react";
 import { aiAPI, marketAPI } from "../lib/api";
 
@@ -318,6 +319,7 @@ const VerdictCard = ({
   livePrice,
   onLogTrade,
   onSimulateTrade,
+  onStrategy,
 }) => {
   const ver = v?.verdict || {};
   const ac = v?.asset_class || "";
@@ -449,6 +451,14 @@ const VerdictCard = ({
         </button>
 
         <button
+          onClick={() => onStrategy(v.symbol)}
+          className="flex-1 text-xs py-2.5 border border-eli-border hover:border-eli-gold/60 text-eli-muted hover:text-eli-text-white rounded-sm flex items-center justify-center gap-2"
+        >
+          <ScrollText className="w-3.5 h-3.5" />
+          Strategy
+        </button>
+
+        <button
           onClick={() => onSimulateTrade(v.symbol)}
           className="flex-1 bg-eli-border hover:bg-eli-navy-5 text-eli-text-white text-xs py-2.5 rounded-sm flex items-center justify-center gap-2"
         >
@@ -493,6 +503,10 @@ export default function TradeSignals() {
   const simulateTrade = (symbol) => {
     alert(`Simulating trade for ${symbol}...`);
     navigate(`/simulator?symbol=${encodeURIComponent(symbol)}`);
+  };
+
+  const viewStrategy = (symbol) => {
+    navigate(`/strategy?symbol=${encodeURIComponent(symbol)}`);
   };
 
   // Normalize backend action values
@@ -607,11 +621,10 @@ export default function TradeSignals() {
           <button
             key={a}
             onClick={() => setFilter(a)}
-            className={`px-4 py-2 text-xs font-bold tracking-wider uppercase rounded-sm border transition-colors ${
-              filter === a
-                ? "bg-eli-gold text-eli-navy border-eli-gold"
-                : "bg-eli-border/30 text-eli-muted border-eli-border hover:border-eli-gold/50"
-            }`}
+            className={`px-4 py-2 text-xs font-bold tracking-wider uppercase rounded-sm border transition-colors ${filter === a
+              ? "bg-eli-gold text-eli-navy border-eli-gold"
+              : "bg-eli-border/30 text-eli-muted border-eli-border hover:border-eli-gold/50"
+              }`}
           >
             {a} <span className="opacity-70">({counts[a]})</span>
           </button>
@@ -641,6 +654,7 @@ export default function TradeSignals() {
               generating={generating}
               onLogTrade={logTrade}
               onSimulateTrade={simulateTrade}
+              onStrategy={viewStrategy}
             />
           ))}
         </div>

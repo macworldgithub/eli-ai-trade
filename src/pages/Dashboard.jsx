@@ -20,15 +20,15 @@
 
 // const Pill = ({ children, color = "navy" }) => {
 //   const map = {
-//     gold: "bg-[#D4AF37]/15 text-[#D4AF37] border-[#D4AF37]/30",
+//     gold: "bg-eli-gold/15 text-eli-gold border-eli-gold/30",
 //     green: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
 //     red: "bg-red-500/15 text-red-400 border-red-500/30",
 //     amber: "bg-amber-500/15 text-amber-400 border-amber-500/30",
-//     navy: "bg-[#1E3A5F]/40 text-[#94A3B8] border-[#1E3A5F]",
+//     navy: "bg-eli-border/40 text-eli-muted border-eli-border",
 //   };
 //   return (
 //     <span
-//       className={`px-2 py-0.5 text-[10px] font-semibold tracking-wider uppercase border rounded-sm ${map[color]}`}
+//       className={`px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase border rounded-sm ${map[color]}`}
 //     >
 //       {children}
 //     </span>
@@ -55,12 +55,12 @@
 //       <div className="flex items-start justify-between mb-3">
 //         <div>
 //           <div className="flex items-center gap-2">
-//             <span className="font-mono font-bold text-white text-sm tracking-tight">
+//             <span className="font-mono font-bold text-eli-text-white text-sm tracking-tight">
 //               {inst.symbol}
 //             </span>
 //             <Pill>{inst.asset_class.toUpperCase()}</Pill>
 //           </div>
-//           <p className="text-[10px] text-[#94A3B8] mt-1 truncate max-w-[180px]">
+//           <p className="text-[10px] text-eli-muted mt-1 truncate max-w-[180px]">
 //             {inst.name}
 //           </p>
 //         </div>
@@ -68,7 +68,7 @@
 //       </div>
 
 //       <div className="flex items-baseline justify-between">
-//         <span className="font-heading text-2xl font-bold text-white tabular-nums">
+//         <span className="font-heading text-2xl font-bold text-eli-text-white tabular-nums">
 //           {fmtPrice(inst.price, inst.asset_class)}
 //         </span>
 //         <span
@@ -87,18 +87,18 @@
 //       </div>
 
 //       {verdict && (
-//         <div className="mt-3 pt-3 border-t border-[#1E3A5F]">
+//         <div className="mt-3 pt-3 border-t border-eli-border">
 //           <div className="flex items-center justify-between text-[10px]">
-//             <span className="text-[#94A3B8] tracking-wider uppercase">
+//             <span className="text-eli-muted tracking-wider uppercase">
 //               AI Confidence
 //             </span>
-//             <span className="text-[#D4AF37] font-mono font-semibold">
+//             <span className="text-eli-gold font-mono font-bold">
 //               {verdict.verdict?.confidence ?? "-"}%
 //             </span>
 //           </div>
-//           <div className="mt-1 h-1 bg-[#1E3A5F] rounded-full overflow-hidden">
+//           <div className="mt-1 h-1 bg-eli-border rounded-full overflow-hidden">
 //             <div
-//               className="h-full bg-gradient-to-r from-[#D4AF37] to-[#F4C430]"
+//               className="h-full bg-gradient-to-r from-eli-gold to-eli-gold-bright"
 //               style={{ width: `${verdict.verdict?.confidence ?? 0}%` }}
 //             />
 //           </div>
@@ -118,8 +118,8 @@
 //   return (
 //     <div className="eli-card p-4" data-testid="sessions-card">
 //       <div className="flex items-center justify-between mb-3">
-//         <h3 className="text-sm font-medium text-white">Market Sessions</h3>
-//         <Clock className="w-4 h-4 text-[#D4AF37]" />
+//         <h3 className="text-sm font-medium text-eli-text-white">Market Sessions</h3>
+//         <Clock className="w-4 h-4 text-eli-gold" />
 //       </div>
 //       <div className="grid grid-cols-4 gap-2">
 //         {list.map((s) => {
@@ -130,7 +130,7 @@
 //               className={`p-2 text-center rounded-sm border ${
 //                 isOpen
 //                   ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-400"
-//                   : "bg-[#1E3A5F]/30 border-[#1E3A5F] text-[#94A3B8]"
+//                   : "bg-eli-border/30 border-eli-border text-eli-muted"
 //               }`}
 //             >
 //               <div className="text-[10px] font-medium">{s.n}</div>
@@ -142,12 +142,12 @@
 //         })}
 //       </div>
 //       {overlaps?.length > 0 && (
-//         <div className="mt-3 pt-3 border-t border-[#1E3A5F]">
-//           <p className="text-[10px] text-[#94A3B8] tracking-wider uppercase mb-1">
+//         <div className="mt-3 pt-3 border-t border-eli-border">
+//           <p className="text-[10px] text-eli-muted tracking-wider uppercase mb-1">
 //             Active Overlaps
 //           </p>
 //           {overlaps.map((o) => (
-//             <span key={o} className="text-xs text-[#D4AF37] font-medium">
+//             <span key={o} className="text-xs text-eli-gold font-medium">
 //               {o}
 //             </span>
 //           ))}
@@ -248,8 +248,8 @@
 //     return (
 //       <div className="flex items-center justify-center h-96">
 //         <div className="flex flex-col items-center gap-4">
-//           <div className="w-8 h-8 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin" />
-//           <p className="text-[#94A3B8] text-sm">Loading EliAI Trade...</p>
+//           <div className="w-8 h-8 border-2 border-eli-gold border-t-transparent rounded-full animate-spin" />
+//           <p className="text-eli-muted text-sm">Loading EliAI Trade...</p>
 //         </div>
 //       </div>
 //     );
@@ -267,9 +267,9 @@
 //       {/* Live ticker banner */}
 //       <div className="eli-card overflow-hidden">
 //         <div className="flex items-stretch">
-//           <div className="px-4 py-2 bg-[#D4AF37]/10 border-r border-[#1E3A5F] flex items-center gap-2 shrink-0">
-//             <Activity className="w-4 h-4 text-[#D4AF37]" />
-//             <span className="text-xs font-semibold text-[#D4AF37] uppercase tracking-wider">
+//           <div className="px-4 py-2 bg-eli-gold/10 border-r border-eli-border flex items-center gap-2 shrink-0">
+//             <Activity className="w-4 h-4 text-eli-gold" />
+//             <span className="text-xs font-bold text-eli-gold uppercase tracking-wider">
 //               Live
 //             </span>
 //           </div>
@@ -282,10 +282,10 @@
 //                     key={`${i.symbol}-${idx}`}
 //                     className="inline-flex items-center gap-2 px-6 py-2"
 //                   >
-//                     <span className="font-mono text-sm text-white font-medium">
+//                     <span className="font-mono text-sm text-eli-text-white font-medium">
 //                       {i.symbol}
 //                     </span>
-//                     <span className="font-mono text-sm tabular-nums text-white">
+//                     <span className="font-mono text-sm tabular-nums text-eli-text-white">
 //                       {fmtPrice(i.price, i.asset_class)}
 //                     </span>
 //                     <span
@@ -305,10 +305,10 @@
 //       {/* Header */}
 //       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
 //         <div>
-//           <h1 className="font-heading text-3xl lg:text-4xl font-bold text-white tracking-tight">
+//           <h1 className="font-heading text-3xl lg:text-4xl font-bold text-eli-text-white tracking-tight">
 //             <span className="eli-gradient-text">Trading</span> Intelligence
 //           </h1>
-//           <p className="text-sm text-[#94A3B8] mt-1">
+//           <p className="text-sm text-eli-muted mt-1">
 //             8 instruments · AI verdicts ·{" "}
 //             {lastUpdate && `updated ${lastUpdate.toLocaleTimeString()}`}
 //           </p>
@@ -316,7 +316,7 @@
 //         <button
 //           onClick={refreshAi}
 //           disabled={refreshingAi}
-//           className="flex items-center gap-2 px-4 py-2 bg-[#D4AF37] hover:bg-[#F4C430] text-[#0A1628] font-semibold text-sm rounded-sm transition-colors disabled:opacity-50"
+//           className="flex items-center gap-2 px-4 py-2 bg-eli-gold hover:bg-eli-gold-bright text-eli-navy font-bold text-sm rounded-sm transition-colors disabled:opacity-50"
 //           data-testid="refresh-ai-btn"
 //         >
 //           <Sparkles
@@ -328,7 +328,7 @@
 
 //       {/* Instrument tiles by asset class */}
 //       <section>
-//         <h2 className="text-sm font-semibold text-[#D4AF37] tracking-wider uppercase mb-3">
+//         <h2 className="text-sm font-bold text-eli-gold tracking-wider uppercase mb-3">
 //           Forex
 //         </h2>
 //         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -343,7 +343,7 @@
 //       </section>
 
 //       <section>
-//         <h2 className="text-sm font-semibold text-[#D4AF37] tracking-wider uppercase mb-3">
+//         <h2 className="text-sm font-bold text-eli-gold tracking-wider uppercase mb-3">
 //           Indices
 //         </h2>
 //         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -358,7 +358,7 @@
 //       </section>
 
 //       <section>
-//         <h2 className="text-sm font-semibold text-[#D4AF37] tracking-wider uppercase mb-3">
+//         <h2 className="text-sm font-bold text-eli-gold tracking-wider uppercase mb-3">
 //           Commodities
 //         </h2>
 //         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -376,7 +376,7 @@
 //         <SessionsCard sessions={sessions} overlaps={overlaps} />
 //         <div className="eli-card p-4 lg:col-span-2">
 //           <div className="flex items-center justify-between mb-3">
-//             <h3 className="text-sm font-medium text-white">Gold · 7-day</h3>
+//             <h3 className="text-sm font-medium text-eli-text-white">Gold · 7-day</h3>
 //             <Pill color="gold">XAU/USD</Pill>
 //           </div>
 //           <MiniChart candles={gold} />
@@ -404,22 +404,22 @@ import { AreaChart, Area, ResponsiveContainer, YAxis } from "recharts";
 const fmtPrice = (p, ac) =>
   typeof p === "number"
     ? p.toLocaleString(undefined, {
-        minimumFractionDigits: ac === "forex" ? 4 : 2,
-        maximumFractionDigits: ac === "forex" ? 5 : 2,
-      })
+      minimumFractionDigits: ac === "forex" ? 4 : 2,
+      maximumFractionDigits: ac === "forex" ? 5 : 2,
+    })
     : "-";
 
 const Pill = ({ children, color = "navy" }) => {
   const map = {
-    gold: "bg-[#D4AF37]/15 text-[#D4AF37] border-[#D4AF37]/30",
+    gold: "bg-eli-gold/15 text-eli-gold border-eli-gold/30",
     green: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
     red: "bg-red-500/15 text-red-400 border-red-500/30",
     amber: "bg-amber-500/15 text-amber-400 border-amber-500/30",
-    navy: "bg-[#1E3A5F]/40 text-[#94A3B8] border-[#1E3A5F]",
+    navy: "bg-eli-border/40 text-eli-muted border-eli-border",
   };
   return (
     <span
-      className={`px-2 py-0.5 text-[10px] font-semibold tracking-wider uppercase border rounded-sm ${map[color]}`}
+      className={`px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase border rounded-sm ${map[color]}`}
     >
       {children}
     </span>
@@ -455,22 +455,22 @@ const InstrumentTile = ({
           e.stopPropagation();
           onToggleWatchlist(inst.symbol);
         }}
-        className="absolute top-3 right-3 text-[#94A3B8] hover:text-[#D4AF37] transition-colors"
+        className="absolute top-3 right-3 text-eli-muted hover:text-eli-gold transition-colors"
       >
         <Star
-          className={`w-4 h-4 ${isInWatchlist ? "fill-[#D4AF37] text-[#D4AF37]" : ""}`}
+          className={`w-4 h-4 ${isInWatchlist ? "fill-eli-gold text-eli-gold" : ""}`}
         />
       </button>
 
       <div className="flex items-start justify-between mb-3">
         <div>
           <div className="flex items-center gap-2">
-            <span className="font-mono font-bold text-white text-sm tracking-tight">
+            <span className="font-mono font-bold text-eli-text-white text-sm tracking-tight">
               {inst.symbol}
             </span>
             <Pill>{inst.asset_class.toUpperCase()}</Pill>
           </div>
-          <p className="text-[10px] text-[#94A3B8] mt-1 truncate max-w-[180px]">
+          <p className="text-[10px] text-eli-muted mt-1 truncate max-w-[180px]">
             {inst.name}
           </p>
         </div>
@@ -478,13 +478,12 @@ const InstrumentTile = ({
       </div>
 
       <div className="flex items-baseline justify-between">
-        <span className="font-heading text-2xl font-bold text-white tabular-nums">
+        <span className="font-heading text-2xl font-bold text-eli-text-white tabular-nums">
           {fmtPrice(inst.price, inst.asset_class)}
         </span>
         <span
-          className={`text-xs font-mono tabular-nums flex items-center gap-1 ${
-            positive ? "text-emerald-400" : "text-red-400"
-          }`}
+          className={`text-xs font-mono tabular-nums flex items-center gap-1 ${positive ? "text-emerald-400" : "text-red-400"
+            }`}
         >
           {positive ? (
             <TrendingUp className="w-3 h-3" />
@@ -497,18 +496,18 @@ const InstrumentTile = ({
       </div>
 
       {verdict && (
-        <div className="mt-3 pt-3 border-t border-[#1E3A5F]">
+        <div className="mt-3 pt-3 border-t border-eli-border">
           <div className="flex items-center justify-between text-[10px]">
-            <span className="text-[#94A3B8] tracking-wider uppercase">
+            <span className="text-eli-muted tracking-wider uppercase">
               AI Confidence
             </span>
-            <span className="text-[#D4AF37] font-mono font-semibold">
+            <span className="text-eli-gold font-mono font-bold">
               {verdict.verdict?.confidence ?? "-"}%
             </span>
           </div>
-          <div className="mt-1 h-1 bg-[#1E3A5F] rounded-full overflow-hidden">
+          <div className="mt-1 h-1 bg-eli-border rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-[#D4AF37] to-[#F4C430]"
+              className="h-full bg-gradient-to-r from-eli-gold to-eli-gold-bright"
               style={{ width: `${verdict.verdict?.confidence ?? 0}%` }}
             />
           </div>
@@ -532,10 +531,10 @@ const WatchlistSection = ({
   if (watchlistInstruments.length === 0) {
     return (
       <section>
-        <h2 className="text-sm font-semibold text-[#D4AF37] tracking-wider uppercase mb-4 flex items-center gap-2">
+        <h2 className="text-sm font-bold text-eli-gold tracking-wider uppercase mb-4 flex items-center gap-2">
           <Star className="w-4 h-4" /> MY WATCHLIST
         </h2>
-        <div className="eli-card p-8 text-center text-[#94A3B8]">
+        <div className="eli-card p-8 text-center text-eli-muted">
           <Star className="w-10 h-10 mx-auto mb-3 opacity-40" />
           <p>Your watchlist is empty</p>
           <p className="text-xs mt-1">Star any instrument to add it here</p>
@@ -546,7 +545,7 @@ const WatchlistSection = ({
 
   return (
     <section>
-      <h2 className="text-sm font-semibold text-[#D4AF37] tracking-wider uppercase mb-4 flex items-center gap-2">
+      <h2 className="text-sm font-bold text-eli-gold tracking-wider uppercase mb-4 flex items-center gap-2">
         <Star className="w-4 h-4" /> MY WATCHLIST ({watchlistSymbols.length})
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -575,7 +574,7 @@ const SignalSpotlight = ({ verdicts, onLogTrade }) => {
   return (
     <section>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-semibold text-[#D4AF37] tracking-wider uppercase">
+        <h2 className="text-sm font-bold text-eli-gold tracking-wider uppercase">
           SIGNAL SPOTLIGHT
         </h2>
         <span className="text-xs text-emerald-400 flex items-center gap-1">
@@ -588,10 +587,10 @@ const SignalSpotlight = ({ verdicts, onLogTrade }) => {
           return (
             <div
               key={v.symbol}
-              className="eli-card p-5 border-l-4 border-[#D4AF37]"
+              className="eli-card p-5 border-l-4 border-eli-gold"
             >
               <div className="flex justify-between items-start mb-3">
-                <h3 className="font-bold text-white text-lg">{v.symbol}</h3>
+                <h3 className="font-bold text-eli-text-white text-lg">{v.symbol}</h3>
                 <Pill
                   color={
                     ver.action === "BUY" || ver.action === "BULLISH"
@@ -602,12 +601,12 @@ const SignalSpotlight = ({ verdicts, onLogTrade }) => {
                   {ver.action}
                 </Pill>
               </div>
-              <p className="text-sm text-[#CBD5E1] line-clamp-2 mb-4">
+              <p className="text-sm text-eli-slate-300 line-clamp-2 mb-4">
                 {ver.overview || ver.reasoning || "Strong momentum detected..."}
               </p>
               <button
                 onClick={() => onLogTrade(v.symbol)}
-                className="w-full bg-[#D4AF37] hover:bg-[#F4C430] text-[#0A1628] font-bold py-2.5 rounded-sm text-sm flex items-center justify-center gap-2"
+                className="w-full bg-eli-gold hover:bg-eli-gold-bright text-eli-navy font-bold py-2.5 rounded-sm text-sm flex items-center justify-center gap-2"
               >
                 <BookOpen className="w-4 h-4" />
                 Log Trade Now
@@ -625,19 +624,19 @@ const QuickStats = () => {
 
   return (
     <div className="eli-card p-5">
-      <h3 className="text-sm font-semibold text-white mb-4">Quick Stats</h3>
+      <h3 className="text-sm font-bold text-eli-text-white mb-4">Quick Stats</h3>
       <div className="grid grid-cols-3 gap-4 text-center">
         <div>
           <p className="text-emerald-400 text-2xl font-bold">
             {stats.dailyPnL}
           </p>
-          <p className="text-[10px] text-[#94A3B8] uppercase tracking-wider">
+          <p className="text-[10px] text-eli-muted uppercase tracking-wider">
             Daily P&amp;L
           </p>
         </div>
         <div>
-          <p className="text-white text-2xl font-bold">{stats.winRate}</p>
-          <p className="text-[10px] text-[#94A3B8] uppercase tracking-wider">
+          <p className="text-eli-text-white text-2xl font-bold">{stats.winRate}</p>
+          <p className="text-[10px] text-eli-muted uppercase tracking-wider">
             Win Rate
           </p>
         </div>
@@ -645,7 +644,7 @@ const QuickStats = () => {
           <p className="text-amber-400 text-2xl font-bold">
             {stats.openPositions}
           </p>
-          <p className="text-[10px] text-[#94A3B8] uppercase tracking-wider">
+          <p className="text-[10px] text-eli-muted uppercase tracking-wider">
             Open Positions
           </p>
         </div>
@@ -662,10 +661,10 @@ const AnnouncementsTicker = () => {
   ];
 
   return (
-    <div className="eli-card overflow-hidden bg-[#1E3A5F]/30 border border-[#D4AF37]/30">
-      <div className="flex items-center gap-2 px-4 py-2 bg-[#D4AF37]/10 border-b border-[#1E3A5F]">
-        <Activity className="w-4 h-4 text-[#D4AF37]" />
-        <span className="text-xs font-semibold text-[#D4AF37] uppercase tracking-wider">
+    <div className="eli-card overflow-hidden bg-eli-border/30 border border-eli-gold/30">
+      <div className="flex items-center gap-2 px-4 py-2 bg-eli-gold/10 border-b border-eli-border">
+        <Activity className="w-4 h-4 text-eli-gold" />
+        <span className="text-xs font-bold text-eli-gold uppercase tracking-wider">
           Upcoming Events (24h)
         </span>
       </div>
@@ -674,7 +673,7 @@ const AnnouncementsTicker = () => {
           {[...announcements, ...announcements].map((item, idx) => (
             <div
               key={idx}
-              className="inline-flex items-center px-8 text-[#94A3B8] hover:text-white transition-colors"
+              className="inline-flex items-center px-8 text-eli-muted hover:text-eli-text-white transition-colors"
             >
               📅 {item}
             </div>
@@ -696,8 +695,8 @@ const SessionsCard = ({ sessions, overlaps }) => {
   return (
     <div className="eli-card p-5" data-testid="sessions-card">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-medium text-white">Market Sessions</h3>
-        <Clock className="w-4 h-4 text-[#D4AF37]" />
+        <h3 className="text-sm font-medium text-eli-text-white">Market Sessions</h3>
+        <Clock className="w-4 h-4 text-eli-gold" />
       </div>
       <div className="space-y-3">
         {list.map((s) => {
@@ -705,15 +704,14 @@ const SessionsCard = ({ sessions, overlaps }) => {
           return (
             <div
               key={s.k}
-              className={`flex justify-between items-center p-3 rounded-sm border ${
-                isOpen
-                  ? "bg-emerald-500/10 border-emerald-500/40"
-                  : "bg-[#1E3A5F]/30 border-[#1E3A5F]"
-              }`}
+              className={`flex justify-between items-center p-3 rounded-sm border ${isOpen
+                ? "bg-emerald-500/10 border-emerald-500/40"
+                : "bg-eli-border/30 border-eli-border"
+                }`}
             >
               <div>
-                <div className="font-medium text-white">{s.n}</div>
-                <div className="text-[10px] text-[#94A3B8]">{s.time}</div>
+                <div className="font-medium text-eli-text-white">{s.n}</div>
+                <div className="text-[10px] text-eli-muted">{s.time}</div>
               </div>
               <Pill color={isOpen ? "green" : "navy"}>
                 {isOpen ? "OPEN" : "CLOSED"}
@@ -723,8 +721,8 @@ const SessionsCard = ({ sessions, overlaps }) => {
         })}
       </div>
       {overlaps?.length > 0 && (
-        <div className="mt-4 pt-4 border-t border-[#1E3A5F]">
-          <p className="text-[10px] text-[#94A3B8] uppercase tracking-wider mb-2">
+        <div className="mt-4 pt-4 border-t border-eli-border">
+          <p className="text-[10px] text-eli-muted uppercase tracking-wider mb-2">
             Active Overlaps
           </p>
           <div className="flex gap-2">
@@ -804,7 +802,7 @@ export default function Dashboard() {
       try {
         const h = await marketAPI.getHistorical("XAU/USD", "7d");
         setGold(h.data.candles);
-      } catch (e) {}
+      } catch (e) { }
 
       setLastUpdate(new Date());
     } catch (e) {
@@ -853,8 +851,8 @@ export default function Dashboard() {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-8 h-8 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin" />
-          <p className="text-[#94A3B8]">Loading Trading Intelligence...</p>
+          <div className="w-8 h-8 border-2 border-eli-gold border-t-transparent rounded-full animate-spin" />
+          <p className="text-eli-muted">Loading Trading Intelligence...</p>
         </div>
       </div>
     );
@@ -871,9 +869,9 @@ export default function Dashboard() {
       {/* Live Ticker */}
       <div className="eli-card overflow-hidden">
         <div className="flex items-stretch">
-          <div className="px-4 py-2 bg-[#D4AF37]/10 border-r border-[#1E3A5F] flex items-center gap-2 shrink-0">
-            <Activity className="w-4 h-4 text-[#D4AF37]" />
-            <span className="text-xs font-semibold text-[#D4AF37] uppercase tracking-wider">
+          <div className="px-4 py-2 bg-eli-gold/10 border-r border-eli-border flex items-center gap-2 shrink-0">
+            <Activity className="w-4 h-4 text-eli-gold" />
+            <span className="text-xs font-bold text-eli-gold uppercase tracking-wider">
               LIVE
             </span>
           </div>
@@ -886,10 +884,10 @@ export default function Dashboard() {
                     key={`${i.symbol}-${idx}`}
                     className="inline-flex items-center gap-2 px-6 py-2"
                   >
-                    <span className="font-mono text-sm text-white font-medium">
+                    <span className="font-mono text-sm text-eli-text-white font-medium">
                       {i.symbol}
                     </span>
-                    <span className="font-mono text-sm tabular-nums text-white">
+                    <span className="font-mono text-sm tabular-nums text-eli-text-white">
                       {fmtPrice(i.price, i.asset_class)}
                     </span>
                     <span
@@ -911,10 +909,10 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
-          <h1 className="font-heading text-4xl font-bold text-white tracking-tight">
+          <h1 className="font-heading text-4xl font-bold text-eli-text-white tracking-tight">
             Trading <span className="eli-gradient-text">Intelligence</span>
           </h1>
-          <p className="text-[#94A3B8]">
+          <p className="text-eli-muted">
             Real-time AI • 8 Instruments • Last updated{" "}
             {lastUpdate?.toLocaleTimeString()}
           </p>
@@ -922,7 +920,7 @@ export default function Dashboard() {
         <button
           onClick={refreshAi}
           disabled={refreshingAi}
-          className="flex items-center gap-2 px-5 py-3 bg-[#D4AF37] hover:bg-[#F4C430] text-[#0A1628] font-bold rounded-sm disabled:opacity-50"
+          className="flex items-center gap-2 px-5 py-3 bg-eli-gold hover:bg-eli-gold-bright text-eli-navy font-bold rounded-sm disabled:opacity-50"
         >
           <Sparkles
             className={`w-4 h-4 ${refreshingAi ? "animate-spin" : ""}`}
@@ -945,7 +943,7 @@ export default function Dashboard() {
 
       {/* Forex */}
       <section>
-        <h2 className="text-sm font-semibold text-[#D4AF37] tracking-wider uppercase mb-4">
+        <h2 className="text-sm font-bold text-eli-gold tracking-wider uppercase mb-4">
           Forex
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -964,7 +962,7 @@ export default function Dashboard() {
 
       {/* Indices */}
       <section>
-        <h2 className="text-sm font-semibold text-[#D4AF37] tracking-wider uppercase mb-4">
+        <h2 className="text-sm font-bold text-eli-gold tracking-wider uppercase mb-4">
           Indices
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -983,7 +981,7 @@ export default function Dashboard() {
 
       {/* Commodities */}
       <section>
-        <h2 className="text-sm font-semibold text-[#D4AF37] tracking-wider uppercase mb-4">
+        <h2 className="text-sm font-bold text-eli-gold tracking-wider uppercase mb-4">
           Commodities
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1005,7 +1003,7 @@ export default function Dashboard() {
         <SessionsCard sessions={sessions} overlaps={overlaps} />
         <div className="lg:col-span-2 eli-card p-5">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-medium text-white">
+            <h3 className="text-lg font-medium text-eli-text-white">
               Gold (XAU/USD) — 7 Days
             </h3>
             <Pill color="gold">XAU/USD</Pill>

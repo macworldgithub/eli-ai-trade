@@ -25,12 +25,12 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#0A1628]">
+    <div className="flex min-h-screen items-center justify-center bg-eli-navy">
       <div className="eli-card w-full max-w-md p-6 space-y-4">
-        <h2 className="text-2xl font-bold text-[#D4AF37] text-center">Sign Up</h2>
+        <h2 className="text-2xl font-bold text-eli-gold text-center">Sign Up</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-[#94A3B8] mb-1" htmlFor="email">
+            <label className="block text-eli-muted mb-1" htmlFor="email">
               <User className="inline w-4 h-4 mr-1" /> Email
             </label>
             <input
@@ -40,11 +40,11 @@ const Signup = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="w-full px-3 py-2 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded text-white focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50"
+              className="w-full px-3 py-2 bg-eli-border/40 border border-eli-border rounded text-eli-text-white focus:outline-none focus:ring-2 focus:ring-eli-gold/50"
             />
           </div>
           <div>
-            <label className="block text-[#94A3B8] mb-1" htmlFor="password">
+            <label className="block text-eli-muted mb-1" htmlFor="password">
               <Lock className="inline w-4 h-4 mr-1" /> Password
             </label>
             <input
@@ -54,7 +54,7 @@ const Signup = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full px-3 py-2 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded text-white focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50"
+              className="w-full px-3 py-2 bg-eli-border/40 border border-eli-border rounded text-eli-text-white focus:outline-none focus:ring-2 focus:ring-eli-gold/50"
             />
           </div>
           <div className="flex items-center">
@@ -63,22 +63,22 @@ const Signup = () => {
               type="checkbox"
               checked={remember}
               onChange={(e) => setRemember(e.target.checked)}
-              className="h-4 w-4 text-[#D4AF37] bg-[#1E3A5F] border-[#1E3A5F] rounded focus:ring-[#D4AF37]"
+              className="h-4 w-4 text-eli-gold bg-eli-border border-eli-border rounded focus:ring-eli-gold"
             />
-            <label htmlFor="remember" className="ml-2 text-[#94A3B8] text-sm">
+            <label htmlFor="remember" className="ml-2 text-eli-muted text-sm">
               Remember me
             </label>
           </div>
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-2 bg-[#D4AF37] hover:bg-[#F4C430] text-[#0A1628] font-bold py-2 rounded transition-colors shadow-lg shadow-[#D4AF37]/20"
+            className="w-full flex items-center justify-center gap-2 bg-eli-gold hover:bg-eli-gold-bright text-eli-navy font-bold py-2 rounded transition-colors shadow-lg shadow-eli-gold/20"
           >
             <ArrowRight className="w-4 h-4" /> Sign Up
           </button>
         </form>
-        <p className="text-center text-[#94A3B8] text-sm">
+        <p className="text-center text-eli-muted text-sm">
           Already have an account?{' '}
-          <a href="/login" className="text-[#D4AF37] hover:underline">
+          <a href="/login" className="text-eli-gold hover:underline">
             Log in
           </a>
         </p>

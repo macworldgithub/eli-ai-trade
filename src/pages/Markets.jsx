@@ -64,8 +64,8 @@
 //   return (
 //     <div className="space-y-6" data-testid="markets-page">
 //       <div>
-//         <h1 className="font-heading text-3xl font-bold text-white">Markets</h1>
-//         <p className="text-sm text-[#94A3B8] mt-1">Live OHLC and charts for the 8 EliAI instruments.</p>
+//         <h1 className="font-heading text-3xl font-bold text-eli-text-white">Markets</h1>
+//         <p className="text-sm text-eli-muted mt-1">Live OHLC and charts for the 8 EliAI instruments.</p>
 //       </div>
 
 //       {/* Asset class tabs */}
@@ -78,10 +78,10 @@
 //               const first = instruments.find((i) => i.asset_class === t);
 //               if (first) setSelected(first.symbol);
 //             }}
-//             className={`px-4 py-2 text-sm font-semibold rounded-sm border tracking-wider uppercase transition-colors ${
+//             className={`px-4 py-2 text-sm font-bold rounded-sm border tracking-wider uppercase transition-colors ${
 //               tab === t
-//                 ? "bg-[#D4AF37] text-[#0A1628] border-[#D4AF37]"
-//                 : "bg-[#1E3A5F]/30 text-[#94A3B8] border-[#1E3A5F] hover:border-[#D4AF37]/50"
+//                 ? "bg-eli-gold text-eli-navy border-eli-gold"
+//                 : "bg-eli-border/30 text-eli-muted border-eli-border hover:border-eli-gold/50"
 //             }`}
 //             data-testid={`tab-${t}`}
 //           >
@@ -93,15 +93,15 @@
 //       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 //         {/* Instrument list */}
 //         <div className="eli-card overflow-hidden">
-//           <div className="px-4 py-3 border-b border-[#1E3A5F] flex items-center justify-between">
-//             <h3 className="text-sm font-medium text-white">{tab.toUpperCase()}</h3>
-//             <span className="text-xs text-[#94A3B8]">{list.length}</span>
+//           <div className="px-4 py-3 border-b border-eli-border flex items-center justify-between">
+//             <h3 className="text-sm font-medium text-eli-text-white">{tab.toUpperCase()}</h3>
+//             <span className="text-xs text-eli-muted">{list.length}</span>
 //           </div>
-//           <div className="divide-y divide-[#1E3A5F]">
+//           <div className="divide-y divide-eli-border">
 //             {loading ? (
-//               <div className="p-6 text-center text-[#94A3B8] text-sm">Loading...</div>
+//               <div className="p-6 text-center text-eli-muted text-sm">Loading...</div>
 //             ) : list.length === 0 ? (
-//               <div className="p-6 text-center text-[#94A3B8] text-sm">No instruments</div>
+//               <div className="p-6 text-center text-eli-muted text-sm">No instruments</div>
 //             ) : (
 //               list.map((i) => {
 //                 const pos = i.change_percent >= 0;
@@ -110,17 +110,17 @@
 //                   <button
 //                     key={i.symbol}
 //                     onClick={() => setSelected(i.symbol)}
-//                     className={`w-full px-4 py-3 flex items-center justify-between hover:bg-[#1E3A5F]/40 transition-colors text-left ${
-//                       isSel ? "bg-[#D4AF37]/10 border-l-2 border-[#D4AF37]" : ""
+//                     className={`w-full px-4 py-3 flex items-center justify-between hover:bg-eli-border/40 transition-colors text-left ${
+//                       isSel ? "bg-eli-gold/10 border-l-2 border-eli-gold" : ""
 //                     }`}
 //                     data-testid={`market-row-${i.symbol.replace(/[\\/ &]/g, "_")}`}
 //                   >
 //                     <div>
-//                       <p className="font-mono font-semibold text-white text-sm">{i.symbol}</p>
-//                       <p className="text-[10px] text-[#94A3B8] truncate max-w-[160px]">{i.name}</p>
+//                       <p className="font-mono font-bold text-eli-text-white text-sm">{i.symbol}</p>
+//                       <p className="text-[10px] text-eli-muted truncate max-w-[160px]">{i.name}</p>
 //                     </div>
 //                     <div className="text-right">
-//                       <p className="font-mono text-white text-sm tabular-nums">
+//                       <p className="font-mono text-eli-text-white text-sm tabular-nums">
 //                         {i.price.toLocaleString(undefined, {
 //                           minimumFractionDigits: i.asset_class === "forex" ? 4 : 2,
 //                           maximumFractionDigits: i.asset_class === "forex" ? 5 : 2,
@@ -141,16 +141,16 @@
 //         {/* Chart + stats */}
 //         <div className="lg:col-span-2 eli-card p-5">
 //           {!current ? (
-//             <div className="text-center text-[#94A3B8] py-12">Select an instrument</div>
+//             <div className="text-center text-eli-muted py-12">Select an instrument</div>
 //           ) : (
 //             <>
 //               <div className="flex items-start justify-between mb-4">
 //                 <div>
-//                   <h2 className="font-heading text-2xl font-bold text-white">{current.symbol}</h2>
-//                   <p className="text-xs text-[#94A3B8]">{current.name}</p>
+//                   <h2 className="font-heading text-2xl font-bold text-eli-text-white">{current.symbol}</h2>
+//                   <p className="text-xs text-eli-muted">{current.name}</p>
 //                 </div>
 //                 <div className="text-right">
-//                   <p className="font-heading text-3xl font-bold text-white tabular-nums">
+//                   <p className="font-heading text-3xl font-bold text-eli-text-white tabular-nums">
 //                     {current.price.toLocaleString(undefined, {
 //                       minimumFractionDigits: decimals - 1,
 //                       maximumFractionDigits: decimals,
@@ -179,10 +179,10 @@
 //                   <button
 //                     key={r.key}
 //                     onClick={() => setRange(r.key)}
-//                     className={`px-3 py-1 text-xs font-semibold rounded-sm transition-colors ${
+//                     className={`px-3 py-1 text-xs font-bold rounded-sm transition-colors ${
 //                       range === r.key
-//                         ? "bg-[#D4AF37] text-[#0A1628]"
-//                         : "bg-[#1E3A5F]/30 text-[#94A3B8] hover:text-white"
+//                         ? "bg-eli-gold text-eli-navy"
+//                         : "bg-eli-border/30 text-eli-muted hover:text-eli-text-white"
 //                     }`}
 //                     data-testid={`range-${r.key}`}
 //                   >
@@ -195,10 +195,10 @@
 //               <div className="h-72">
 //                 {loadingChart ? (
 //                   <div className="h-full flex items-center justify-center">
-//                     <RefreshCw className="w-5 h-5 text-[#D4AF37] animate-spin" />
+//                     <RefreshCw className="w-5 h-5 text-eli-gold animate-spin" />
 //                   </div>
 //                 ) : chartData.length === 0 ? (
-//                   <div className="h-full flex items-center justify-center text-[#94A3B8] text-sm">
+//                   <div className="h-full flex items-center justify-center text-eli-muted text-sm">
 //                     No chart data
 //                   </div>
 //                 ) : (
@@ -235,18 +235,18 @@
 //               </div>
 
 //               {/* OHLC stats */}
-//               <div className="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-[#1E3A5F]">
+//               <div className="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-eli-border">
 //                 <div>
-//                   <p className="text-[10px] text-[#94A3B8] uppercase tracking-wider">Day High</p>
-//                   <p className="font-mono text-white tabular-nums">{current.high?.toFixed(decimals)}</p>
+//                   <p className="text-[10px] text-eli-muted uppercase tracking-wider">Day High</p>
+//                   <p className="font-mono text-eli-text-white tabular-nums">{current.high?.toFixed(decimals)}</p>
 //                 </div>
 //                 <div>
-//                   <p className="text-[10px] text-[#94A3B8] uppercase tracking-wider">Day Low</p>
-//                   <p className="font-mono text-white tabular-nums">{current.low?.toFixed(decimals)}</p>
+//                   <p className="text-[10px] text-eli-muted uppercase tracking-wider">Day Low</p>
+//                   <p className="font-mono text-eli-text-white tabular-nums">{current.low?.toFixed(decimals)}</p>
 //                 </div>
 //                 <div>
-//                   <p className="text-[10px] text-[#94A3B8] uppercase tracking-wider">Prev Close</p>
-//                   <p className="font-mono text-white tabular-nums">
+//                   <p className="text-[10px] text-eli-muted uppercase tracking-wider">Prev Close</p>
+//                   <p className="font-mono text-eli-text-white tabular-nums">
 //                     {current.previous_close?.toFixed(decimals)}
 //                   </p>
 //                 </div>
@@ -371,10 +371,10 @@ export default function Markets() {
     <div className="space-y-6" data-testid="markets-page">
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-white">
+          <h1 className="font-heading text-3xl font-bold text-eli-text-white">
             Markets
           </h1>
-          <p className="text-sm text-[#94A3B8] mt-1">
+          <p className="text-sm text-eli-muted mt-1">
             Live charts with AI pattern recognition • TradingView style
           </p>
         </div>
@@ -383,10 +383,10 @@ export default function Markets() {
             <button
               key={l}
               onClick={() => setLayout(l)}
-              className={`px-4 py-1.5 text-xs font-semibold rounded-sm border transition-colors ${
+              className={`px-4 py-1.5 text-xs font-bold rounded-sm border transition-colors ${
                 layout === l
-                  ? "bg-[#D4AF37] text-[#0A1628]"
-                  : "bg-[#1E3A5F]/30 text-[#94A3B8] border-[#1E3A5F]"
+                  ? "bg-eli-gold text-eli-navy"
+                  : "bg-eli-border/30 text-eli-muted border-eli-border"
               }`}
             >
               {l === "single"
@@ -409,10 +409,10 @@ export default function Markets() {
               const first = instruments.find((i) => i.asset_class === t);
               if (first) setSelected(first.symbol);
             }}
-            className={`px-5 py-2 text-sm font-semibold rounded-sm border tracking-wider uppercase transition-colors ${
+            className={`px-5 py-2 text-sm font-bold rounded-sm border tracking-wider uppercase transition-colors ${
               tab === t
-                ? "bg-[#D4AF37] text-[#0A1628] border-[#D4AF37]"
-                : "bg-[#1E3A5F]/30 text-[#94A3B8] border-[#1E3A5F] hover:border-[#D4AF37]/50"
+                ? "bg-eli-gold text-eli-navy border-eli-gold"
+                : "bg-eli-border/30 text-eli-muted border-eli-border hover:border-eli-gold/50"
             }`}
           >
             {t}
@@ -423,13 +423,13 @@ export default function Markets() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Instrument List */}
         <div className="lg:col-span-3 eli-card overflow-hidden">
-          <div className="px-4 py-3 border-b border-[#1E3A5F] flex items-center justify-between">
-            <h3 className="text-sm font-medium text-white">
+          <div className="px-4 py-3 border-b border-eli-border flex items-center justify-between">
+            <h3 className="text-sm font-medium text-eli-text-white">
               {tab.toUpperCase()}
             </h3>
-            <span className="text-xs text-[#94A3B8]">{list.length}</span>
+            <span className="text-xs text-eli-muted">{list.length}</span>
           </div>
-          <div className="divide-y divide-[#1E3A5F] max-h-[70vh] overflow-auto">
+          <div className="divide-y divide-eli-border max-h-[70vh] overflow-auto">
             {list.map((i) => {
               const pos = i.change_percent >= 0;
               const isSel = i.symbol === selected;
@@ -437,20 +437,20 @@ export default function Markets() {
                 <button
                   key={i.symbol}
                   onClick={() => setSelected(i.symbol)}
-                  className={`w-full px-4 py-3 flex items-center justify-between hover:bg-[#1E3A5F]/40 transition-colors text-left ${
-                    isSel ? "bg-[#D4AF37]/10 border-l-2 border-[#D4AF37]" : ""
+                  className={`w-full px-4 py-3 flex items-center justify-between hover:bg-eli-border/40 transition-colors text-left ${
+                    isSel ? "bg-eli-gold/10 border-l-2 border-eli-gold" : ""
                   }`}
                 >
                   <div>
-                    <p className="font-mono font-semibold text-white">
+                    <p className="font-mono font-bold text-eli-text-white">
                       {i.symbol}
                     </p>
-                    <p className="text-[10px] text-[#94A3B8] truncate">
+                    <p className="text-[10px] text-eli-muted truncate">
                       {i.name}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-mono text-white tabular-nums">
+                    <p className="font-mono text-eli-text-white tabular-nums">
                       {i.price.toFixed(decimals)}
                     </p>
                     <p
@@ -472,13 +472,13 @@ export default function Markets() {
             <>
               <div className="flex justify-between items-start mb-5">
                 <div>
-                  <h2 className="font-heading text-3xl font-bold text-white">
+                  <h2 className="font-heading text-3xl font-bold text-eli-text-white">
                     {current.symbol}
                   </h2>
-                  <p className="text-[#94A3B8]">{current.name}</p>
+                  <p className="text-eli-muted">{current.name}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-4xl font-bold text-white tabular-nums">
+                  <p className="text-4xl font-bold text-eli-text-white tabular-nums">
                     {current.price.toFixed(decimals)}
                   </p>
                   <p
@@ -501,10 +501,10 @@ export default function Markets() {
                     <button
                       key={r.key}
                       onClick={() => setRange(r.key)}
-                      className={`px-4 py-1 text-xs font-semibold rounded-sm transition-all ${
+                      className={`px-4 py-1 text-xs font-bold rounded-sm transition-all ${
                         range === r.key
-                          ? "bg-[#D4AF37] text-[#0A1628]"
-                          : "bg-[#1E3A5F]/30 text-[#94A3B8] hover:bg-[#1E3A5F]"
+                          ? "bg-eli-gold text-eli-navy"
+                          : "bg-eli-border/30 text-eli-muted hover:bg-eli-border"
                       }`}
                     >
                       {r.label}
@@ -536,7 +536,7 @@ export default function Markets() {
               <div className="h-[460px] relative">
                 {loadingChart ? (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <RefreshCw className="w-8 h-8 animate-spin text-[#D4AF37]" />
+                    <RefreshCw className="w-8 h-8 animate-spin text-eli-gold" />
                   </div>
                 ) : (
                   <ResponsiveContainer width="100%" height="100%">
@@ -595,30 +595,30 @@ export default function Markets() {
               </div>
 
               {/* OHLC Stats */}
-              <div className="grid grid-cols-4 gap-4 mt-6 pt-6 border-t border-[#1E3A5F]">
+              <div className="grid grid-cols-4 gap-4 mt-6 pt-6 border-t border-eli-border">
                 <div>
-                  <p className="text-[10px] text-[#94A3B8] uppercase">Open</p>
-                  <p className="font-mono text-white">
+                  <p className="text-[10px] text-eli-muted uppercase">Open</p>
+                  <p className="font-mono text-eli-text-white">
                     {current.open?.toFixed(decimals)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-[10px] text-[#94A3B8] uppercase">High</p>
+                  <p className="text-[10px] text-eli-muted uppercase">High</p>
                   <p className="font-mono text-emerald-400">
                     {current.high?.toFixed(decimals)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-[10px] text-[#94A3B8] uppercase">Low</p>
+                  <p className="text-[10px] text-eli-muted uppercase">Low</p>
                   <p className="font-mono text-red-400">
                     {current.low?.toFixed(decimals)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-[10px] text-[#94A3B8] uppercase">
+                  <p className="text-[10px] text-eli-muted uppercase">
                     Prev Close
                   </p>
-                  <p className="font-mono text-white">
+                  <p className="font-mono text-eli-text-white">
                     {current.previous_close?.toFixed(decimals)}
                   </p>
                 </div>

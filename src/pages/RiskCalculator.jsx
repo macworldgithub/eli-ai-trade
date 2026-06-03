@@ -59,22 +59,22 @@
 //     <div className="space-y-6" data-testid="risk-calculator-page">
 //       <div>
 //         <div className="flex items-center gap-3">
-//           <Calculator className="w-7 h-7 text-[#D4AF37]" />
-//           <h1 className="font-heading text-3xl font-bold text-white">Risk Calculator</h1>
+//           <Calculator className="w-7 h-7 text-eli-gold" />
+//           <h1 className="font-heading text-3xl font-bold text-eli-text-white">Risk Calculator</h1>
 //         </div>
-//         <p className="text-sm text-[#94A3B8] mt-1">Size positions against your 5%-max-risk rule.</p>
+//         <p className="text-sm text-eli-muted mt-1">Size positions against your 5%-max-risk rule.</p>
 //       </div>
 
 //       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 //         <form onSubmit={submit} className="eli-card p-5 space-y-4" data-testid="risk-form">
 //           <div>
-//             <label className="block text-xs uppercase tracking-wider text-[#94A3B8] mb-1.5">
+//             <label className="block text-xs uppercase tracking-wider text-eli-muted mb-1.5">
 //               Instrument
 //             </label>
 //             <select
 //               value={form.symbol}
 //               onChange={(e) => setSymbol(e.target.value)}
-//               className="w-full px-3 py-2 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white"
+//               className="w-full px-3 py-2 bg-eli-border/40 border border-eli-border rounded-sm text-eli-text-white"
 //               data-testid="risk-symbol-select"
 //             >
 //               {instruments.map((i) => (
@@ -85,7 +85,7 @@
 
 //           <div className="grid grid-cols-2 gap-3">
 //             <div>
-//               <label className="block text-xs uppercase tracking-wider text-[#94A3B8] mb-1.5">
+//               <label className="block text-xs uppercase tracking-wider text-eli-muted mb-1.5">
 //                 Account Balance ($)
 //               </label>
 //               <input
@@ -93,12 +93,12 @@
 //                 step="any"
 //                 value={form.account_balance}
 //                 onChange={(e) => setForm({ ...form, account_balance: e.target.value })}
-//                 className="w-full px-3 py-2 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white font-mono"
+//                 className="w-full px-3 py-2 bg-eli-border/40 border border-eli-border rounded-sm text-eli-text-white font-mono"
 //                 data-testid="risk-balance"
 //               />
 //             </div>
 //             <div>
-//               <label className="block text-xs uppercase tracking-wider text-[#94A3B8] mb-1.5">
+//               <label className="block text-xs uppercase tracking-wider text-eli-muted mb-1.5">
 //                 Risk %
 //               </label>
 //               <input
@@ -106,7 +106,7 @@
 //                 step="any"
 //                 value={form.risk_percentage}
 //                 onChange={(e) => setForm({ ...form, risk_percentage: e.target.value })}
-//                 className="w-full px-3 py-2 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white font-mono"
+//                 className="w-full px-3 py-2 bg-eli-border/40 border border-eli-border rounded-sm text-eli-text-white font-mono"
 //                 data-testid="risk-percent"
 //               />
 //             </div>
@@ -114,7 +114,7 @@
 
 //           <div className="grid grid-cols-2 gap-3">
 //             <div>
-//               <label className="block text-xs uppercase tracking-wider text-[#94A3B8] mb-1.5">
+//               <label className="block text-xs uppercase tracking-wider text-eli-muted mb-1.5">
 //                 Entry Price
 //               </label>
 //               <input
@@ -122,12 +122,12 @@
 //                 step="any"
 //                 value={form.entry_price}
 //                 onChange={(e) => setForm({ ...form, entry_price: e.target.value })}
-//                 className="w-full px-3 py-2 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white font-mono"
+//                 className="w-full px-3 py-2 bg-eli-border/40 border border-eli-border rounded-sm text-eli-text-white font-mono"
 //                 data-testid="risk-entry"
 //               />
 //             </div>
 //             <div>
-//               <label className="block text-xs uppercase tracking-wider text-[#94A3B8] mb-1.5">
+//               <label className="block text-xs uppercase tracking-wider text-eli-muted mb-1.5">
 //                 Stop Loss
 //               </label>
 //               <input
@@ -135,7 +135,7 @@
 //                 step="any"
 //                 value={form.stop_loss}
 //                 onChange={(e) => setForm({ ...form, stop_loss: e.target.value })}
-//                 className="w-full px-3 py-2 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white font-mono"
+//                 className="w-full px-3 py-2 bg-eli-border/40 border border-eli-border rounded-sm text-eli-text-white font-mono"
 //                 data-testid="risk-stop"
 //               />
 //             </div>
@@ -155,7 +155,7 @@
 //           <button
 //             type="submit"
 //             disabled={loading}
-//             className="w-full px-4 py-2.5 bg-[#D4AF37] hover:bg-[#F4C430] text-[#0A1628] font-bold rounded-sm disabled:opacity-50"
+//             className="w-full px-4 py-2.5 bg-eli-gold hover:bg-eli-gold-bright text-eli-navy font-bold rounded-sm disabled:opacity-50"
 //             data-testid="risk-calc-btn"
 //           >
 //             {loading ? "Calculating..." : "Calculate"}
@@ -164,43 +164,43 @@
 
 //         <div className="eli-card p-5">
 //           <div className="flex items-center gap-2 mb-4">
-//             <Target className="w-5 h-5 text-[#D4AF37]" />
-//             <h3 className="font-semibold text-white">Result</h3>
+//             <Target className="w-5 h-5 text-eli-gold" />
+//             <h3 className="font-bold text-eli-text-white">Result</h3>
 //           </div>
 //           {!result ? (
-//             <p className="text-sm text-[#94A3B8]">Submit the form to see your sizing breakdown.</p>
+//             <p className="text-sm text-eli-muted">Submit the form to see your sizing breakdown.</p>
 //           ) : (
 //             <div className="space-y-3" data-testid="risk-result">
 //               <div className="grid grid-cols-2 gap-3">
-//                 <div className="p-3 bg-[#1E3A5F]/40 rounded-sm">
-//                   <p className="text-[10px] text-[#94A3B8] uppercase tracking-wider">Risk Amount</p>
-//                   <p className="font-mono text-2xl font-bold text-[#D4AF37]">${result.risk_amount.toLocaleString()}</p>
+//                 <div className="p-3 bg-eli-border/40 rounded-sm">
+//                   <p className="text-[10px] text-eli-muted uppercase tracking-wider">Risk Amount</p>
+//                   <p className="font-mono text-2xl font-bold text-eli-gold">${result.risk_amount.toLocaleString()}</p>
 //                 </div>
-//                 <div className="p-3 bg-[#1E3A5F]/40 rounded-sm">
-//                   <p className="text-[10px] text-[#94A3B8] uppercase tracking-wider">Position Size</p>
-//                   <p className="font-mono text-2xl font-bold text-white">{result.position_size}</p>
+//                 <div className="p-3 bg-eli-border/40 rounded-sm">
+//                   <p className="text-[10px] text-eli-muted uppercase tracking-wider">Position Size</p>
+//                   <p className="font-mono text-2xl font-bold text-eli-text-white">{result.position_size}</p>
 //                 </div>
 //               </div>
 //               <div className="space-y-2 text-sm">
-//                 <div className="flex items-center justify-between py-2 border-b border-[#1E3A5F]">
-//                   <span className="text-[#94A3B8]">Pip Risk</span>
-//                   <span className="font-mono text-white">{result.pip_risk}</span>
+//                 <div className="flex items-center justify-between py-2 border-b border-eli-border">
+//                   <span className="text-eli-muted">Pip Risk</span>
+//                   <span className="font-mono text-eli-text-white">{result.pip_risk}</span>
 //                 </div>
-//                 <div className="flex items-center justify-between py-2 border-b border-[#1E3A5F]">
-//                   <span className="text-[#94A3B8]">Potential Loss</span>
+//                 <div className="flex items-center justify-between py-2 border-b border-eli-border">
+//                   <span className="text-eli-muted">Potential Loss</span>
 //                   <span className="font-mono text-red-400">−${result.potential_loss.toLocaleString()}</span>
 //                 </div>
-//                 <div className="flex items-center justify-between py-2 border-b border-[#1E3A5F]">
-//                   <span className="text-[#94A3B8]">Profit @ 2R</span>
+//                 <div className="flex items-center justify-between py-2 border-b border-eli-border">
+//                   <span className="text-eli-muted">Profit @ 2R</span>
 //                   <span className="font-mono text-emerald-400">+${result.potential_profit_2r.toLocaleString()}</span>
 //                 </div>
-//                 <div className="flex items-center justify-between py-2 border-b border-[#1E3A5F]">
-//                   <span className="text-[#94A3B8]">Profit @ 3R</span>
+//                 <div className="flex items-center justify-between py-2 border-b border-eli-border">
+//                   <span className="text-eli-muted">Profit @ 3R</span>
 //                   <span className="font-mono text-emerald-400">+${result.potential_profit_3r.toLocaleString()}</span>
 //                 </div>
 //                 <div className="flex items-center justify-between py-2">
-//                   <span className="text-[#94A3B8]">Max Position Value</span>
-//                   <span className="font-mono text-white">${result.max_position_value.toLocaleString()}</span>
+//                   <span className="text-eli-muted">Max Position Value</span>
+//                   <span className="font-mono text-eli-text-white">${result.max_position_value.toLocaleString()}</span>
 //                 </div>
 //               </div>
 //             </div>
@@ -320,18 +320,18 @@ export default function RiskCalculator({ inline = false }) {
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <Calculator className="w-8 h-8 text-[#D4AF37]" />
-              <h1 className="font-heading text-4xl font-bold text-white">
+              <Calculator className="w-8 h-8 text-eli-gold" />
+              <h1 className="font-heading text-4xl font-bold text-eli-text-white">
                 Risk Calculator
               </h1>
             </div>
-            <p className="text-[#94A3B8] mt-1">
+            <p className="text-eli-muted mt-1">
               Professional position sizing with real-time data
             </p>
           </div>
           <button
             onClick={() => setShowPortfolio(!showPortfolio)}
-            className="text-sm flex items-center gap-1.5 text-[#D4AF37] hover:text-white"
+            className="text-sm flex items-center gap-1.5 text-eli-gold hover:text-eli-text-white"
           >
             <DollarSign className="w-4 h-4" />
             {showPortfolio ? "Hide" : "Show"} Portfolio Overview
@@ -344,13 +344,13 @@ export default function RiskCalculator({ inline = false }) {
         <div className="xl:col-span-5 eli-card p-6">
           <form onSubmit={submit} className="space-y-5">
             <div>
-              <label className="block text-xs uppercase tracking-wider text-[#94A3B8] mb-2">
+              <label className="block text-xs uppercase tracking-wider text-eli-muted mb-2">
                 Instrument
               </label>
               <select
                 value={form.symbol}
                 onChange={(e) => setSymbol(e.target.value)}
-                className="w-full px-4 py-3 bg-[#1E3A5F]/50 border border-[#1E3A5F] rounded-sm text-white font-medium"
+                className="w-full px-4 py-3 bg-eli-border/50 border border-eli-border rounded-sm text-eli-text-white font-medium"
               >
                 {instruments.map((i) => (
                   <option key={i.symbol} value={i.symbol}>
@@ -362,7 +362,7 @@ export default function RiskCalculator({ inline = false }) {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs uppercase tracking-wider text-[#94A3B8] mb-2">
+                <label className="block text-xs uppercase tracking-wider text-eli-muted mb-2">
                   Account Balance (USD)
                 </label>
                 <input
@@ -371,11 +371,11 @@ export default function RiskCalculator({ inline = false }) {
                   onChange={(e) =>
                     setForm({ ...form, account_balance: e.target.value })
                   }
-                  className="w-full px-4 py-3 bg-[#1E3A5F]/50 border border-[#1E3A5F] rounded-sm text-white font-mono"
+                  className="w-full px-4 py-3 bg-eli-border/50 border border-eli-border rounded-sm text-eli-text-white font-mono"
                 />
               </div>
               <div>
-                <label className="block text-xs uppercase tracking-wider text-[#94A3B8] mb-2">
+                <label className="block text-xs uppercase tracking-wider text-eli-muted mb-2">
                   Risk per Trade (%)
                 </label>
                 <input
@@ -387,14 +387,14 @@ export default function RiskCalculator({ inline = false }) {
                   onChange={(e) =>
                     setForm({ ...form, risk_percentage: e.target.value })
                   }
-                  className="w-full px-4 py-3 bg-[#1E3A5F]/50 border border-[#1E3A5F] rounded-sm text-white font-mono"
+                  className="w-full px-4 py-3 bg-eli-border/50 border border-eli-border rounded-sm text-eli-text-white font-mono"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs uppercase tracking-wider text-[#94A3B8] mb-2">
+                <label className="block text-xs uppercase tracking-wider text-eli-muted mb-2">
                   Entry Price
                 </label>
                 <input
@@ -404,11 +404,11 @@ export default function RiskCalculator({ inline = false }) {
                   onChange={(e) =>
                     setForm({ ...form, entry_price: e.target.value })
                   }
-                  className="w-full px-4 py-3 bg-[#1E3A5F]/50 border border-[#1E3A5F] rounded-sm text-white font-mono"
+                  className="w-full px-4 py-3 bg-eli-border/50 border border-eli-border rounded-sm text-eli-text-white font-mono"
                 />
               </div>
               <div>
-                <label className="block text-xs uppercase tracking-wider text-[#94A3B8] mb-2">
+                <label className="block text-xs uppercase tracking-wider text-eli-muted mb-2">
                   Stop Loss
                 </label>
                 <input
@@ -418,22 +418,22 @@ export default function RiskCalculator({ inline = false }) {
                   onChange={(e) =>
                     setForm({ ...form, stop_loss: e.target.value })
                   }
-                  className="w-full px-4 py-3 bg-[#1E3A5F]/50 border border-[#1E3A5F] rounded-sm text-white font-mono"
+                  className="w-full px-4 py-3 bg-eli-border/50 border border-eli-border rounded-sm text-eli-text-white font-mono"
                 />
               </div>
             </div>
 
             {/* $ Per Pip Field */}
-            <div className="bg-[#1E3A5F]/30 p-4 rounded-sm border border-[#1E3A5F]">
+            <div className="bg-eli-border/30 p-4 rounded-sm border border-eli-border">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-[#94A3B8] flex items-center gap-1">
+                <span className="text-eli-muted flex items-center gap-1">
                   <Info className="w-4 h-4" /> $ Per Pip
                 </span>
-                <span className="font-mono text-white font-semibold">
+                <span className="font-mono text-eli-text-white font-bold">
                   ${pipValue.toFixed(2)}
                 </span>
               </div>
-              <div className="text-xs text-[#94A3B8] mt-1">
+              <div className="text-xs text-eli-muted mt-1">
                 Distance to Stop Loss:{" "}
                 <span className="font-mono">{pipDistance}</span> pips
               </div>
@@ -452,7 +452,7 @@ export default function RiskCalculator({ inline = false }) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-4 bg-[#D4AF37] hover:bg-[#F4C430] text-[#0A1628] font-bold text-lg rounded-sm disabled:opacity-60 transition-all"
+              className="w-full py-4 bg-eli-gold hover:bg-eli-gold-bright text-eli-navy font-bold text-lg rounded-sm disabled:opacity-60 transition-all"
             >
               {loading ? "Calculating..." : "Calculate Position Size"}
             </button>
@@ -462,8 +462,8 @@ export default function RiskCalculator({ inline = false }) {
         {/* Results */}
         <div className="xl:col-span-7 eli-card p-6">
           <div className="flex items-center gap-3 mb-6">
-            <Target className="w-6 h-6 text-[#D4AF37]" />
-            <h3 className="text-xl font-semibold text-white">
+            <Target className="w-6 h-6 text-eli-gold" />
+            <h3 className="text-xl font-bold text-eli-text-white">
               Position Sizing Result
             </h3>
           </div>
@@ -471,33 +471,33 @@ export default function RiskCalculator({ inline = false }) {
           {!result ? (
             <div className="h-[480px] flex flex-col items-center justify-center text-center">
               <div className="text-6xl opacity-30 mb-6">📐</div>
-              <p className="text-[#94A3B8]">
+              <p className="text-eli-muted">
                 Enter details and calculate to see position breakdown
               </p>
             </div>
           ) : (
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-5 bg-gradient-to-br from-[#1E3A5F] to-[#14253F] rounded-sm">
-                  <p className="text-xs text-[#94A3B8]">RISK AMOUNT</p>
-                  <p className="text-4xl font-bold text-[#D4AF37] mt-1">
+                <div className="p-5 bg-gradient-to-br from-eli-border to-eli-navy-4 rounded-sm">
+                  <p className="text-xs text-eli-muted">RISK AMOUNT</p>
+                  <p className="text-4xl font-bold text-eli-gold mt-1">
                     ${result.risk_amount?.toLocaleString()}
                   </p>
                 </div>
-                <div className="p-5 bg-gradient-to-br from-[#1E3A5F] to-[#14253F] rounded-sm">
-                  <p className="text-xs text-[#94A3B8]">POSITION SIZE</p>
-                  <p className="text-4xl font-bold text-white mt-1">
+                <div className="p-5 bg-gradient-to-br from-eli-border to-eli-navy-4 rounded-sm">
+                  <p className="text-xs text-eli-muted">POSITION SIZE</p>
+                  <p className="text-4xl font-bold text-eli-text-white mt-1">
                     {result.position_size}
                   </p>
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-[#1E3A5F]">
-                <p className="text-xs text-[#94A3B8] mb-1">TOTAL TRADE VALUE</p>
-                <p className="text-4xl font-bold text-white">
+              <div className="pt-4 border-t border-eli-border">
+                <p className="text-xs text-eli-muted mb-1">TOTAL TRADE VALUE</p>
+                <p className="text-4xl font-bold text-eli-text-white">
                   ${result.trade_value?.toLocaleString()}
                 </p>
-                <p className="text-sm text-[#94A3B8]">
+                <p className="text-sm text-eli-muted">
                   {((result.trade_value / form.account_balance) * 100).toFixed(
                     2,
                   )}
@@ -507,28 +507,28 @@ export default function RiskCalculator({ inline = false }) {
 
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div className="space-y-3">
-                  <div className="flex justify-between py-2 border-b border-[#1E3A5F]">
-                    <span className="text-[#94A3B8]">Pip Value</span>
+                  <div className="flex justify-between py-2 border-b border-eli-border">
+                    <span className="text-eli-muted">Pip Value</span>
                     <span className="font-mono">
                       ${result.pip_value?.toFixed(2)}
                     </span>
                   </div>
-                  <div className="flex justify-between py-2 border-b border-[#1E3A5F]">
-                    <span className="text-[#94A3B8]">Pips at Risk</span>
-                    <span className="font-mono text-white">
+                  <div className="flex justify-between py-2 border-b border-eli-border">
+                    <span className="text-eli-muted">Pips at Risk</span>
+                    <span className="font-mono text-eli-text-white">
                       {result.pips_at_risk}
                     </span>
                   </div>
                 </div>
                 <div className="space-y-3">
-                  <div className="flex justify-between py-2 border-b border-[#1E3A5F]">
-                    <span className="text-[#94A3B8]">2R Target</span>
+                  <div className="flex justify-between py-2 border-b border-eli-border">
+                    <span className="text-eli-muted">2R Target</span>
                     <span className="font-mono text-emerald-400">
                       +${result.potential_profit_2r?.toLocaleString()}
                     </span>
                   </div>
-                  <div className="flex justify-between py-2 border-b border-[#1E3A5F]">
-                    <span className="text-[#94A3B8]">3R Target</span>
+                  <div className="flex justify-between py-2 border-b border-eli-border">
+                    <span className="text-eli-muted">3R Target</span>
                     <span className="font-mono text-emerald-400">
                       +${result.potential_profit_3r?.toLocaleString()}
                     </span>
@@ -543,10 +543,10 @@ export default function RiskCalculator({ inline = false }) {
       {/* Portfolio Overview (Collapsible) */}
       {!inline && showPortfolio && (
         <div className="eli-card p-6">
-          <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+          <h3 className="font-bold text-eli-text-white mb-4 flex items-center gap-2">
             <DollarSign className="w-5 h-5" /> Portfolio Risk Overview
           </h3>
-          <p className="text-[#94A3B8] text-sm">
+          <p className="text-eli-muted text-sm">
             Coming soon: Total portfolio exposure, correlation risk, and max
             drawdown estimate.
           </p>

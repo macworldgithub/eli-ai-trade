@@ -21,7 +21,7 @@ export const ThemeProvider = ({ children }) => {
     }
   }, []);
 
-  // Apply theme class to html element
+  // Apply theme class to html element, handling both dark and light
   useEffect(() => {
     const root = document.documentElement;
     if (theme === 'dark') {
@@ -34,9 +34,7 @@ export const ThemeProvider = ({ children }) => {
     localStorage.setItem('eli_ai_theme', theme);
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
-  };
+  const toggleTheme = () => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>

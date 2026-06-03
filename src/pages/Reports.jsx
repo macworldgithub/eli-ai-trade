@@ -14,9 +14,9 @@ import {
 
 const Stat = ({ label, value, color = "white", subtext }) => (
   <div className="eli-card p-4">
-    <p className="text-[10px] uppercase tracking-wider text-[#94A3B8]">{label}</p>
+    <p className="text-[10px] uppercase tracking-wider text-eli-muted">{label}</p>
     <p className={`font-heading text-2xl sm:text-3xl font-bold mt-1 ${color}`}>{value}</p>
-    {subtext && <p className="text-[10px] text-[#94A3B8] mt-1">{subtext}</p>}
+    {subtext && <p className="text-[10px] text-eli-muted mt-1">{subtext}</p>}
   </div>
 );
 
@@ -24,19 +24,19 @@ const PerfTable = ({ data, title, primaryColLabel = "Segment" }) => {
   if (!data || data.length === 0) {
     return (
       <div className="eli-card p-5">
-        <h2 className="text-sm font-semibold text-[#D4AF37] tracking-wider uppercase mb-3">{title}</h2>
-        <p className="text-sm text-[#94A3B8]">No data available.</p>
+        <h2 className="text-sm font-bold text-eli-gold tracking-wider uppercase mb-3">{title}</h2>
+        <p className="text-sm text-eli-muted">No data available.</p>
       </div>
     );
   }
   
   return (
     <div className="eli-card p-5">
-      <h2 className="text-sm font-semibold text-[#D4AF37] tracking-wider uppercase mb-3">{title}</h2>
+      <h2 className="text-sm font-bold text-eli-gold tracking-wider uppercase mb-3">{title}</h2>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-[10px] uppercase tracking-wider text-[#94A3B8] border-b border-[#1E3A5F]">
+            <tr className="text-[10px] uppercase tracking-wider text-eli-muted border-b border-eli-border">
               <th className="text-left py-2">{primaryColLabel}</th>
               <th className="text-right">Trades</th>
               <th className="text-right">Win %</th>
@@ -45,13 +45,13 @@ const PerfTable = ({ data, title, primaryColLabel = "Segment" }) => {
           </thead>
           <tbody>
             {data.map((p, idx) => (
-              <tr key={idx} className="border-b border-[#1E3A5F]/50 hover:bg-[#1E3A5F]/20">
-                <td className="py-2 font-mono text-white whitespace-nowrap">{p.segment}</td>
-                <td className="text-right text-[#94A3B8] tabular-nums">{p.trades}</td>
-                <td className="text-right font-mono text-[#D4AF37] tabular-nums">
+              <tr key={idx} className="border-b border-eli-border/50 hover:bg-eli-border/20">
+                <td className="py-2 font-mono text-eli-text-white whitespace-nowrap">{p.segment}</td>
+                <td className="text-right text-eli-muted tabular-nums">{p.trades}</td>
+                <td className="text-right font-mono text-eli-gold tabular-nums">
                   {p.trades > 0 ? ((p.wins / p.trades) * 100).toFixed(0) : 0}%
                 </td>
-                <td className={`text-right font-mono tabular-nums ${p.pnl > 0 ? "text-emerald-400" : p.pnl < 0 ? "text-red-400" : "text-white"}`}>
+                <td className={`text-right font-mono tabular-nums ${p.pnl > 0 ? "text-emerald-400" : p.pnl < 0 ? "text-red-400" : "text-eli-text-white"}`}>
                   {p.pnl >= 0 ? "+" : ""}${p.pnl.toFixed(2)}
                 </td>
               </tr>
@@ -227,7 +227,7 @@ export default function Reports() {
             setSortDir("desc");
           }
         }}
-        className={`text-${align} py-2 cursor-pointer select-none hover:text-[#D4AF37] transition-colors`}
+        className={`text-${align} py-2 cursor-pointer select-none hover:text-eli-gold transition-colors`}
       >
         <span className={`inline-flex items-center gap-1 ${align === "right" ? "justify-end w-full" : ""}`}>
           {label}
@@ -242,18 +242,18 @@ export default function Reports() {
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <BarChart3 className="w-8 h-8 text-[#D4AF37]" />
-            <h1 className="font-heading text-4xl font-bold text-white">Reports</h1>
+            <BarChart3 className="w-8 h-8 text-eli-gold" />
+            <h1 className="font-heading text-4xl font-bold text-eli-text-white">Reports</h1>
           </div>
-          <p className="text-[#94A3B8] mt-2">
+          <p className="text-eli-muted mt-2">
             Performance attribution, strategy comparisons, and tax summaries.
           </p>
         </div>
         <div className="flex gap-3">
-          <button onClick={load} disabled={loading} className="flex items-center gap-2 px-4 py-2 bg-[#1E3A5F]/50 text-white border border-[#1E3A5F] rounded-sm hover:bg-[#1E3A5F] transition-colors disabled:opacity-50">
+          <button onClick={load} disabled={loading} className="flex items-center gap-2 px-4 py-2 bg-eli-border/50 text-eli-text-white border border-eli-border rounded-sm hover:bg-eli-border transition-colors disabled:opacity-50">
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} /> Refresh
           </button>
-          <button onClick={exportCSV} disabled={!allTrades.length} className="flex items-center gap-2 px-4 py-2 bg-[#D4AF37] hover:bg-[#F4C430] text-[#0A1628] font-bold rounded-sm disabled:opacity-50 shadow-lg shadow-[#D4AF37]/20 transition-colors">
+          <button onClick={exportCSV} disabled={!allTrades.length} className="flex items-center gap-2 px-4 py-2 bg-eli-gold hover:bg-eli-gold-bright text-eli-navy font-bold rounded-sm disabled:opacity-50 shadow-lg shadow-eli-gold/20 transition-colors">
             <Download className="w-4 h-4" /> Export CSV
           </button>
         </div>
@@ -261,7 +261,7 @@ export default function Reports() {
 
       {/* Tax Summary Row */}
       <div>
-        <h2 className="text-lg font-bold text-[#D4AF37] tracking-wider uppercase mb-4">Tax & Volume Summary</h2>
+        <h2 className="text-lg font-bold text-eli-gold tracking-wider uppercase mb-4">Tax & Volume Summary</h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <Stat label="Gross Profit" value={`+$${taxSummary.grossProfit.toFixed(2)}`} color="text-emerald-400" subtext="Sum of winning trades" />
           <Stat label="Gross Loss" value={`-$${Math.abs(taxSummary.grossLoss).toFixed(2)}`} color="text-red-400" subtext="Sum of losing trades" />
@@ -272,10 +272,10 @@ export default function Reports() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="eli-card p-6">
-          <h2 className="text-sm font-bold text-[#D4AF37] tracking-wider uppercase mb-4">Equity Curve</h2>
+          <h2 className="text-sm font-bold text-eli-gold tracking-wider uppercase mb-4">Equity Curve</h2>
           <div className="h-[300px]">
             {chartData.length < 2 ? (
-              <div className="h-full flex items-center justify-center text-[#94A3B8] text-sm">
+              <div className="h-full flex items-center justify-center text-eli-muted text-sm">
                 Close at least 2 trades to see your equity curve.
               </div>
             ) : (
@@ -299,9 +299,9 @@ export default function Reports() {
         </div>
 
         <div className="eli-card p-6">
-          <h2 className="text-sm font-bold text-[#D4AF37] tracking-wider uppercase mb-4">AI Coach Score Trend</h2>
+          <h2 className="text-sm font-bold text-eli-gold tracking-wider uppercase mb-4">AI Coach Score Trend</h2>
           {coachTrend.length < 2 ? (
-            <div className="h-[300px] flex items-center justify-center text-[#94A3B8] text-sm">
+            <div className="h-[300px] flex items-center justify-center text-eli-muted text-sm">
               Score at least 2 trades to see your coach trend.
             </div>
           ) : (
@@ -327,7 +327,7 @@ export default function Reports() {
 
       {/* Performance Attribution Tables */}
       <div>
-        <h2 className="text-lg font-bold text-[#D4AF37] tracking-wider uppercase mb-4">Performance Attribution & Strategy Comparisons</h2>
+        <h2 className="text-lg font-bold text-eli-gold tracking-wider uppercase mb-4">Performance Attribution & Strategy Comparisons</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
           <PerfTable data={directionPerf} title="By Direction" primaryColLabel="Direction" />
           <PerfTable data={sessionPerf} title="By Session" primaryColLabel="Session" />
@@ -337,29 +337,29 @@ export default function Reports() {
       </div>
 
       {/* Sortable / searchable trade log */}
-      <div className="eli-card p-6 border-[#D4AF37]/30" data-testid="trade-log-section">
+      <div className="eli-card p-6 border-eli-gold/30" data-testid="trade-log-section">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <h2 className="text-sm font-bold text-[#D4AF37] tracking-wider uppercase">Master Trade Log</h2>
+          <h2 className="text-sm font-bold text-eli-gold tracking-wider uppercase">Master Trade Log</h2>
           <div className="flex flex-wrap gap-3 items-center">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94A3B8]" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-eli-muted" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search symbol, tags, notes..."
-                className="pl-9 pr-3 py-2 bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm text-white text-sm w-64 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 transition-all"
+                className="pl-9 pr-3 py-2 bg-eli-border/40 border border-eli-border rounded-sm text-eli-text-white text-sm w-64 focus:outline-none focus:ring-2 focus:ring-eli-gold/50 transition-all"
               />
             </div>
-            <div className="flex gap-1.5 p-1 bg-[#1E3A5F]/30 rounded-sm border border-[#1E3A5F]">
+            <div className="flex gap-1.5 p-1 bg-eli-border/30 rounded-sm border border-eli-border">
               {["ALL", "OPEN", "CLOSED"].map((f) => (
                 <button
                   key={f}
                   onClick={() => setStatusFilter(f)}
                   className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-sm transition-colors ${
                     statusFilter === f
-                      ? "bg-[#D4AF37] text-[#0A1628] shadow-sm"
-                      : "text-[#94A3B8] hover:text-white"
+                      ? "bg-eli-gold text-eli-navy shadow-sm"
+                      : "text-eli-muted hover:text-eli-text-white"
                   }`}
                 >
                   {f}
@@ -370,14 +370,14 @@ export default function Reports() {
         </div>
 
         {sortedFiltered.length === 0 ? (
-          <div className="text-center py-16 bg-[#0A1628] rounded-sm border border-[#1E3A5F]">
-            <p className="text-[#94A3B8]">No trades match your filter criteria.</p>
+          <div className="text-center py-16 bg-eli-navy rounded-sm border border-eli-border">
+            <p className="text-eli-muted">No trades match your filter criteria.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-[10px] uppercase tracking-wider text-[#94A3B8] border-b border-[#1E3A5F]">
+                <tr className="text-[10px] uppercase tracking-wider text-eli-muted border-b border-eli-border">
                   <SortHeader k="created_at" label="Date" />
                   <SortHeader k="instrument" label="Symbol" />
                   <SortHeader k="direction" label="Dir" />
@@ -394,16 +394,16 @@ export default function Reports() {
                   const dec = t.instrument?.includes("/") && t.instrument !== "XAU/USD" ? 5 : 2;
                   const pnl = t.profit_loss;
                   return (
-                    <tr key={t.id} className="border-b border-[#1E3A5F]/50 hover:bg-[#1E3A5F]/20 transition-colors">
-                      <td className="py-3 text-[#94A3B8] font-mono text-xs whitespace-nowrap">
+                    <tr key={t.id} className="border-b border-eli-border/50 hover:bg-eli-border/20 transition-colors">
+                      <td className="py-3 text-eli-muted font-mono text-xs whitespace-nowrap">
                         {t.created_at ? new Date(t.created_at).toLocaleDateString() : "-"}
                       </td>
-                      <td className="font-mono font-bold text-white">{t.instrument}</td>
+                      <td className="font-mono font-bold text-eli-text-white">{t.instrument}</td>
                       <td className={`font-bold text-xs ${t.direction === "LONG" ? "text-emerald-400" : "text-red-400"}`}>{t.direction}</td>
-                      <td className="text-[#94A3B8] text-xs">{t.session}</td>
-                      <td className="text-right font-mono text-white tabular-nums">{t.entry_price?.toFixed(dec)}</td>
-                      <td className="text-right font-mono text-white tabular-nums">{t.exit_price ? t.exit_price.toFixed(dec) : "—"}</td>
-                      <td className={`text-right font-mono font-bold tabular-nums ${pnl == null ? "text-[#94A3B8]" : pnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                      <td className="text-eli-muted text-xs">{t.session}</td>
+                      <td className="text-right font-mono text-eli-text-white tabular-nums">{t.entry_price?.toFixed(dec)}</td>
+                      <td className="text-right font-mono text-eli-text-white tabular-nums">{t.exit_price ? t.exit_price.toFixed(dec) : "—"}</td>
+                      <td className={`text-right font-mono font-bold tabular-nums ${pnl == null ? "text-eli-muted" : pnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
                         {pnl == null ? "—" : `${pnl >= 0 ? "+" : ""}$${pnl.toFixed(2)}`}
                       </td>
                       <td className="pl-4">
@@ -420,12 +420,12 @@ export default function Reports() {
                       <td className="text-xs">
                         <div className="flex flex-wrap items-center gap-1.5 min-w-[120px]">
                           {t.strategy_tags && t.strategy_tags.map(tag => (
-                            <span key={tag} className="text-[9px] px-1.5 py-0.5 bg-[#1E3A5F]/50 text-[#CBD5E1] rounded-sm border border-[#1E3A5F] truncate max-w-[80px]" title={tag}>
+                            <span key={tag} className="text-[9px] px-1.5 py-0.5 bg-eli-border/50 text-eli-slate-300 rounded-sm border border-eli-border truncate max-w-[80px]" title={tag}>
                               {tag}
                             </span>
                           ))}
                           {t.chart_url && (
-                            <a href={t.chart_url} target="_blank" rel="noopener noreferrer" className="text-[#D4AF37] hover:text-white" title="View Chart">
+                            <a href={t.chart_url} target="_blank" rel="noopener noreferrer" className="text-eli-gold hover:text-eli-text-white" title="View Chart">
                               <LinkIcon className="w-3.5 h-3.5" />
                             </a>
                           )}
@@ -436,8 +436,8 @@ export default function Reports() {
                 })}
               </tbody>
             </table>
-            <div className="bg-[#0A1628] p-3 border-t border-[#1E3A5F]">
-              <p className="text-[10px] text-[#94A3B8] flex justify-between">
+            <div className="bg-eli-navy p-3 border-t border-eli-border">
+              <p className="text-[10px] text-eli-muted flex justify-between">
                 <span>Showing {sortedFiltered.length} of {allTrades.length} trades</span>
                 <span>Click column headers to sort</span>
               </p>

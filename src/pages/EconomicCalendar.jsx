@@ -12,7 +12,7 @@
 // };
 
 // const CurrencyBadge = ({ ccy }) => (
-//   <span className="px-2 py-0.5 text-[10px] font-mono font-semibold bg-[#1E3A5F]/50 text-[#D4AF37] border border-[#1E3A5F] rounded-sm">
+//   <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-eli-border/50 text-eli-gold border border-eli-border rounded-sm">
 //     {ccy}
 //   </span>
 // );
@@ -61,17 +61,17 @@
 //       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
 //         <div>
 //           <div className="flex items-center gap-3">
-//             <Calendar className="w-7 h-7 text-[#D4AF37]" />
-//             <h1 className="font-heading text-3xl font-bold text-white">Economic Calendar</h1>
+//             <Calendar className="w-7 h-7 text-eli-gold" />
+//             <h1 className="font-heading text-3xl font-bold text-eli-text-white">Economic Calendar</h1>
 //           </div>
-//           <p className="text-sm text-[#94A3B8] mt-1">
+//           <p className="text-sm text-eli-muted mt-1">
 //             Live 2 & 3-star events from Forex Factory · USD · EUR · GBP · JPY · AUD
 //           </p>
 //         </div>
 //         <button
 //           onClick={load}
 //           disabled={loading}
-//           className="flex items-center gap-2 px-4 py-2 bg-[#1E3A5F] hover:bg-[#14274A] text-white text-sm rounded-sm transition-colors disabled:opacity-50"
+//           className="flex items-center gap-2 px-4 py-2 bg-eli-border hover:bg-eli-navy-3 text-eli-text-white text-sm rounded-sm transition-colors disabled:opacity-50"
 //           data-testid="refresh-calendar-btn"
 //         >
 //           <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
@@ -84,21 +84,21 @@
 //           <button
 //             key={f}
 //             onClick={() => setFilter(f)}
-//             className={`px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-sm border transition-colors ${
+//             className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-sm border transition-colors ${
 //               filter === f
-//                 ? "bg-[#D4AF37] text-[#0A1628] border-[#D4AF37]"
-//                 : "bg-[#1E3A5F]/30 text-[#94A3B8] border-[#1E3A5F] hover:border-[#D4AF37]/50"
+//                 ? "bg-eli-gold text-eli-navy border-eli-gold"
+//                 : "bg-eli-border/30 text-eli-muted border-eli-border hover:border-eli-gold/50"
 //             }`}
 //             data-testid={`filter-${f}`}
 //           >
 //             {f === "ALL" ? "All" : f === "HIGH" ? "★★★ High" : "★★ Medium"}
 //           </button>
 //         ))}
-//         <div className="w-px bg-[#1E3A5F] mx-1" />
+//         <div className="w-px bg-eli-border mx-1" />
 //         <button
 //           onClick={() => setCcyFilter("ALL")}
-//           className={`px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-sm border ${
-//             ccyFilter === "ALL" ? "bg-[#D4AF37] text-[#0A1628] border-[#D4AF37]" : "bg-[#1E3A5F]/30 text-[#94A3B8] border-[#1E3A5F] hover:border-[#D4AF37]/50"
+//           className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-sm border ${
+//             ccyFilter === "ALL" ? "bg-eli-gold text-eli-navy border-eli-gold" : "bg-eli-border/30 text-eli-muted border-eli-border hover:border-eli-gold/50"
 //           }`}
 //         >
 //           All Ccy
@@ -107,8 +107,8 @@
 //           <button
 //             key={c}
 //             onClick={() => setCcyFilter(c)}
-//             className={`px-2.5 py-1.5 text-xs font-mono font-semibold rounded-sm border ${
-//               ccyFilter === c ? "bg-[#D4AF37] text-[#0A1628] border-[#D4AF37]" : "bg-[#1E3A5F]/30 text-[#94A3B8] border-[#1E3A5F] hover:border-[#D4AF37]/50"
+//             className={`px-2.5 py-1.5 text-xs font-mono font-bold rounded-sm border ${
+//               ccyFilter === c ? "bg-eli-gold text-eli-navy border-eli-gold" : "bg-eli-border/30 text-eli-muted border-eli-border hover:border-eli-gold/50"
 //             }`}
 //           >
 //             {c}
@@ -118,45 +118,45 @@
 
 //       {loading ? (
 //         <div className="flex items-center justify-center h-64">
-//           <div className="w-8 h-8 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin" />
+//           <div className="w-8 h-8 border-2 border-eli-gold border-t-transparent rounded-full animate-spin" />
 //         </div>
 //       ) : filtered.length === 0 ? (
 //         <div className="eli-card p-12 text-center">
-//           <Calendar className="w-12 h-12 text-[#D4AF37]/50 mx-auto mb-3" />
-//           <h3 className="text-lg font-semibold text-white">No upcoming events</h3>
-//           <p className="text-sm text-[#94A3B8] mt-1">Try changing the filter or check back later.</p>
+//           <Calendar className="w-12 h-12 text-eli-gold/50 mx-auto mb-3" />
+//           <h3 className="text-lg font-bold text-eli-text-white">No upcoming events</h3>
+//           <p className="text-sm text-eli-muted mt-1">Try changing the filter or check back later.</p>
 //         </div>
 //       ) : (
 //         <div className="space-y-6">
 //           {Object.entries(groups).map(([day, evs]) => (
 //             <div key={day}>
-//               <h2 className="text-sm font-semibold text-[#D4AF37] tracking-wider uppercase mb-2">{day}</h2>
-//               <div className="eli-card divide-y divide-[#1E3A5F]">
+//               <h2 className="text-sm font-bold text-eli-gold tracking-wider uppercase mb-2">{day}</h2>
+//               <div className="eli-card divide-y divide-eli-border">
 //                 {evs.map((e) => (
-//                   <div key={e.id} className="px-4 py-3 hover:bg-[#1E3A5F]/30 transition-colors" data-testid={`event-${e.id}`}>
+//                   <div key={e.id} className="px-4 py-3 hover:bg-eli-border/30 transition-colors" data-testid={`event-${e.id}`}>
 //                     <div className="flex items-center justify-between gap-3">
 //                       <div className="flex items-center gap-3 min-w-0 flex-1">
-//                         <span className="text-xs font-mono text-[#94A3B8] tabular-nums w-12 shrink-0">
+//                         <span className="text-xs font-mono text-eli-muted tabular-nums w-12 shrink-0">
 //                           {new Date(e.date).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}
 //                         </span>
 //                         <CurrencyBadge ccy={e.currency} />
 //                         <StarsBadge stars={e.stars} />
-//                         <span className="text-sm text-white truncate">{e.title}</span>
+//                         <span className="text-sm text-eli-text-white truncate">{e.title}</span>
 //                       </div>
-//                       <div className="hidden sm:flex items-center gap-4 text-xs font-mono text-[#94A3B8] shrink-0">
+//                       <div className="hidden sm:flex items-center gap-4 text-xs font-mono text-eli-muted shrink-0">
 //                         {e.forecast && (
 //                           <div>
-//                             F: <span className="text-white">{e.forecast}</span>
+//                             F: <span className="text-eli-text-white">{e.forecast}</span>
 //                           </div>
 //                         )}
 //                         {e.previous && (
 //                           <div>
-//                             P: <span className="text-white">{e.previous}</span>
+//                             P: <span className="text-eli-text-white">{e.previous}</span>
 //                           </div>
 //                         )}
 //                         {e.actual && (
 //                           <div>
-//                             A: <span className="text-[#D4AF37]">{e.actual}</span>
+//                             A: <span className="text-eli-gold">{e.actual}</span>
 //                           </div>
 //                         )}
 //                       </div>
@@ -208,7 +208,7 @@ const ImpactBadge = ({ impact }) => {
   };
   return (
     <span
-      className={`px-3 py-0.5 text-xs font-semibold border rounded-sm ${colors[impact] || colors.LOW}`}
+      className={`px-3 py-0.5 text-xs font-bold border rounded-sm ${colors[impact] || colors.LOW}`}
     >
       {impact} IMPACT
     </span>
@@ -298,19 +298,19 @@ export default function EconomicCalendar() {
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <Calendar className="w-8 h-8 text-[#D4AF37]" />
-            <h1 className="font-heading text-4xl font-bold text-white">
+            <Calendar className="w-8 h-8 text-eli-gold" />
+            <h1 className="font-heading text-4xl font-bold text-eli-text-white">
               Economic Calendar
             </h1>
           </div>
-          <p className="text-[#94A3B8] mt-1">
+          <p className="text-eli-muted mt-1">
             High-impact events with AI Volatility Forecast • Forex &amp; Indices
           </p>
         </div>
         <button
           onClick={load}
           disabled={loading}
-          className="flex items-center gap-2 px-5 py-2.5 bg-[#D4AF37] hover:bg-[#F4C430] text-[#0A1628] font-bold rounded-sm disabled:opacity-50"
+          className="flex items-center gap-2 px-5 py-2.5 bg-eli-gold hover:bg-eli-gold-bright text-eli-navy font-bold rounded-sm disabled:opacity-50"
         >
           <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
           Refresh
@@ -323,10 +323,10 @@ export default function EconomicCalendar() {
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-5 py-2 text-sm font-semibold uppercase tracking-wider rounded-sm border transition-all ${
+            className={`px-5 py-2 text-sm font-bold uppercase tracking-wider rounded-sm border transition-all ${
               filter === f
-                ? "bg-[#D4AF37] text-[#0A1628] border-[#D4AF37]"
-                : "bg-[#1E3A5F]/30 text-[#94A3B8] border-[#1E3A5F] hover:border-[#D4AF37]"
+                ? "bg-eli-gold text-eli-navy border-eli-gold"
+                : "bg-eli-border/30 text-eli-muted border-eli-border hover:border-eli-gold"
             }`}
           >
             {f === "ALL"
@@ -337,16 +337,16 @@ export default function EconomicCalendar() {
           </button>
         ))}
 
-        <div className="w-px bg-[#1E3A5F] mx-2 self-center" />
+        <div className="w-px bg-eli-border mx-2 self-center" />
 
         {assetClasses.map((asset) => (
           <button
             key={asset}
             onClick={() => setAssetFilter(asset)}
-            className={`px-5 py-2 text-sm font-semibold uppercase tracking-wider rounded-sm border transition-all ${
+            className={`px-5 py-2 text-sm font-bold uppercase tracking-wider rounded-sm border transition-all ${
               assetFilter === asset
-                ? "bg-[#D4AF37] text-[#0A1628] border-[#D4AF37]"
-                : "bg-[#1E3A5F]/30 text-[#94A3B8] border-[#1E3A5F] hover:border-[#D4AF37]"
+                ? "bg-eli-gold text-eli-navy border-eli-gold"
+                : "bg-eli-border/30 text-eli-muted border-eli-border hover:border-eli-gold"
             }`}
           >
             {asset}
@@ -356,12 +356,12 @@ export default function EconomicCalendar() {
 
       {loading ? (
         <div className="flex items-center justify-center h-80">
-          <div className="w-9 h-9 border-4 border-[#D4AF37] border-t-transparent rounded-full animate-spin" />
+          <div className="w-9 h-9 border-4 border-eli-gold border-t-transparent rounded-full animate-spin" />
         </div>
       ) : filtered.length === 0 ? (
         <div className="eli-card p-16 text-center">
-          <Calendar className="w-16 h-16 text-[#D4AF37]/40 mx-auto mb-4" />
-          <h3 className="text-2xl font-semibold text-white">
+          <Calendar className="w-16 h-16 text-eli-gold/40 mx-auto mb-4" />
+          <h3 className="text-2xl font-bold text-eli-text-white">
             No matching events
           </h3>
         </div>
@@ -369,19 +369,19 @@ export default function EconomicCalendar() {
         <div className="space-y-8">
           {Object.entries(groups).map(([day, evs]) => (
             <div key={day}>
-              <h2 className="text-lg font-semibold text-[#D4AF37] tracking-wider mb-3">
+              <h2 className="text-lg font-bold text-eli-gold tracking-wider mb-3">
                 {day}
               </h2>
-              <div className="eli-card divide-y divide-[#1E3A5F]">
+              <div className="eli-card divide-y divide-eli-border">
                 {evs.map((e) => (
                   <div
                     key={e.id}
                     onClick={() => setSelectedEvent(e)}
-                    className="px-6 py-5 hover:bg-[#1E3A5F]/50 transition-all cursor-pointer group"
+                    className="px-6 py-5 hover:bg-eli-border/50 transition-all cursor-pointer group"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-5 flex-1">
-                        <div className="font-mono text-sm text-[#94A3B8] w-20 shrink-0">
+                        <div className="font-mono text-sm text-eli-muted w-20 shrink-0">
                           {new Date(e.date).toLocaleTimeString([], {
                             hour: "2-digit",
                             minute: "2-digit",
@@ -390,17 +390,17 @@ export default function EconomicCalendar() {
 
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-3">
-                            <span className="font-semibold text-white text-[15px]">
+                            <span className="font-bold text-eli-text-white text-[15px]">
                               {e.title}
                             </span>
                             {e.currency && (
-                              <span className="text-[#D4AF37] font-mono">
+                              <span className="text-eli-gold font-mono">
                                 ({e.currency})
                               </span>
                             )}
                           </div>
                           {e.description && (
-                            <p className="text-xs text-[#94A3B8] mt-1 line-clamp-1">
+                            <p className="text-xs text-eli-muted mt-1 line-clamp-1">
                               {e.description}
                             </p>
                           )}
@@ -412,7 +412,7 @@ export default function EconomicCalendar() {
                         <ImpactBadge impact={e.impact || "MEDIUM"} />
 
                         {e.aiVolatility && (
-                          <div className="text-xs px-3 py-1 bg-[#1E3A5F] rounded-sm font-mono text-emerald-400">
+                          <div className="text-xs px-3 py-1 bg-eli-border rounded-sm font-mono text-emerald-400">
                             AI ±{e.aiVolatility}%
                           </div>
                         )}
@@ -422,7 +422,7 @@ export default function EconomicCalendar() {
                             ev.stopPropagation();
                             openReferencedMarket(e);
                           }}
-                          className="text-xs flex items-center gap-1.5 bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 text-[#D4AF37] px-4 py-2 rounded-sm"
+                          className="text-xs flex items-center gap-1.5 bg-eli-gold/10 hover:bg-eli-gold/20 text-eli-gold px-4 py-2 rounded-sm"
                         >
                           <BarChart3 className="w-4 h-4" />
                           Market
@@ -441,18 +441,18 @@ export default function EconomicCalendar() {
       {selectedEvent && (
         <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
           <div className="eli-card max-w-2xl w-full max-h-[92vh] overflow-auto">
-            <div className="p-6 border-b border-[#1E3A5F] flex items-center justify-between sticky top-0 bg-[#0A1628] z-10">
+            <div className="p-6 border-b border-eli-border flex items-center justify-between sticky top-0 bg-eli-navy z-10">
               <div>
-                <h2 className="text-2xl font-bold text-white">
+                <h2 className="text-2xl font-bold text-eli-text-white">
                   {selectedEvent.title}
                 </h2>
-                <p className="text-[#94A3B8] mt-1">
+                <p className="text-eli-muted mt-1">
                   {new Date(selectedEvent.date).toLocaleString()}
                 </p>
               </div>
               <button
                 onClick={() => setSelectedEvent(null)}
-                className="text-4xl leading-none text-[#94A3B8] hover:text-white transition-colors"
+                className="text-4xl leading-none text-eli-muted hover:text-eli-text-white transition-colors"
               >
                 ×
               </button>
@@ -474,38 +474,38 @@ export default function EconomicCalendar() {
               </div>
 
               {selectedEvent.description && (
-                <p className="text-[#CBD5E1] leading-relaxed text-[15px]">
+                <p className="text-eli-slate-300 leading-relaxed text-[15px]">
                   {selectedEvent.description}
                 </p>
               )}
 
               {/* Historic Reaction */}
               {selectedEvent.historic && (
-                <div className="bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm p-5">
-                  <h4 className="uppercase text-xs tracking-wider text-[#94A3B8] mb-3">
+                <div className="bg-eli-border/40 border border-eli-border rounded-sm p-5">
+                  <h4 className="uppercase text-xs tracking-wider text-eli-muted mb-3">
                     Historical Market Reaction
                   </h4>
                   <p className="text-emerald-400 font-medium">
                     +{selectedEvent.historic.move}% average move in first 2
                     hours
                   </p>
-                  <div className="h-48 mt-4 bg-[#0F172A] rounded flex items-center justify-center text-xs text-[#94A3B8]">
+                  <div className="h-48 mt-4 bg-eli-slate-900 rounded flex items-center justify-center text-xs text-eli-muted">
                     [ Post-Event Price Action Snapshot ]
                   </div>
                 </div>
               )}
 
-              <div className="flex gap-3 pt-4 border-t border-[#1E3A5F]">
+              <div className="flex gap-3 pt-4 border-t border-eli-border">
                 <button
                   onClick={() => openReferencedMarket(selectedEvent)}
-                  className="flex-1 py-3.5 rounded-sm font-semibold border border-white/20 hover:bg-white/10 flex items-center justify-center gap-2"
+                  className="flex-1 py-3.5 rounded-sm font-bold border border-eli-overlay-20 hover:bg-eli-overlay-10 flex items-center justify-center gap-2"
                 >
                   <BarChart3 className="w-4 h-4" />
                   Open in Markets
                 </button>
                 <button
                   onClick={() => openRiskCalculator(selectedEvent)}
-                  className="flex-1 bg-[#D4AF37] hover:bg-[#F4C430] text-[#0A1628] py-3.5 rounded-sm font-bold flex items-center justify-center gap-2"
+                  className="flex-1 bg-eli-gold hover:bg-eli-gold-bright text-eli-navy py-3.5 rounded-sm font-bold flex items-center justify-center gap-2"
                 >
                   <Target className="w-4 h-4" />
                   Risk Calculator

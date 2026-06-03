@@ -26,14 +26,14 @@
 //       <div className="flex items-start justify-between mb-4">
 //         <div>
 //           <div className="flex items-center gap-2">
-//             <h3 className="font-heading text-xl font-bold text-white">{v?.symbol}</h3>
-//             <span className="text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+//             <h3 className="font-heading text-xl font-bold text-eli-text-white">{v?.symbol}</h3>
+//             <span className="text-[10px] font-bold text-eli-muted uppercase tracking-wider">
 //               {ac}
 //             </span>
 //           </div>
 //           {livePrice != null && (
-//             <p className="text-xs text-[#94A3B8] mt-1 font-mono">
-//               Live: <span className="text-white">{livePrice.toFixed(decimals)}</span>
+//             <p className="text-xs text-eli-muted mt-1 font-mono">
+//               Live: <span className="text-eli-text-white">{livePrice.toFixed(decimals)}</span>
 //             </p>
 //           )}
 //         </div>
@@ -43,12 +43,12 @@
 //       {ver.confidence != null && (
 //         <div className="mb-4">
 //           <div className="flex items-center justify-between text-xs mb-1.5">
-//             <span className="text-[#94A3B8] tracking-wider uppercase">Confidence</span>
-//             <span className="text-[#D4AF37] font-mono font-bold">{ver.confidence}%</span>
+//             <span className="text-eli-muted tracking-wider uppercase">Confidence</span>
+//             <span className="text-eli-gold font-mono font-bold">{ver.confidence}%</span>
 //           </div>
-//           <div className="h-1.5 bg-[#1E3A5F] rounded-full overflow-hidden">
+//           <div className="h-1.5 bg-eli-border rounded-full overflow-hidden">
 //             <div
-//               className="h-full bg-gradient-to-r from-[#D4AF37] to-[#F4C430]"
+//               className="h-full bg-gradient-to-r from-eli-gold to-eli-gold-bright"
 //               style={{ width: `${ver.confidence}%` }}
 //             />
 //           </div>
@@ -56,14 +56,14 @@
 //       )}
 
 //       {ver.reasoning && (
-//         <p className="text-sm text-[#CBD5E1] leading-relaxed mb-4">{ver.reasoning}</p>
+//         <p className="text-sm text-eli-slate-300 leading-relaxed mb-4">{ver.reasoning}</p>
 //       )}
 
 //       {ver.key_levels && (
 //         <div className="grid grid-cols-3 gap-2 mb-4 text-center">
-//           <div className="bg-[#1E3A5F]/40 rounded-sm py-2">
-//             <p className="text-[9px] text-[#94A3B8] uppercase tracking-wider">Entry</p>
-//             <p className="text-xs font-mono text-white tabular-nums">
+//           <div className="bg-eli-border/40 rounded-sm py-2">
+//             <p className="text-[9px] text-eli-muted uppercase tracking-wider">Entry</p>
+//             <p className="text-xs font-mono text-eli-text-white tabular-nums">
 //               {Number(ver.key_levels.entry || 0).toFixed(decimals)}
 //             </p>
 //           </div>
@@ -83,7 +83,7 @@
 //       )}
 
 //       {ver.bias && (
-//         <div className="flex items-center justify-between pt-3 border-t border-[#1E3A5F]">
+//         <div className="flex items-center justify-between pt-3 border-t border-eli-border">
 //           <div className="flex items-center gap-2 text-xs">
 //             {ver.bias === "BULLISH" ? (
 //               <TrendingUp className="w-4 h-4 text-emerald-400" />
@@ -92,13 +92,13 @@
 //             ) : (
 //               <Minus className="w-4 h-4 text-amber-400" />
 //             )}
-//             <span className="text-[#94A3B8] tracking-wider uppercase">{ver.bias}</span>
+//             <span className="text-eli-muted tracking-wider uppercase">{ver.bias}</span>
 //           </div>
 //           <div className="flex items-center gap-3">
 //             <button
 //               onClick={() => onGenerate(v.symbol)}
 //               disabled={generating === v.symbol}
-//               className="text-xs text-[#94A3B8] hover:text-[#D4AF37] flex items-center gap-1 disabled:opacity-50"
+//               className="text-xs text-eli-muted hover:text-eli-gold flex items-center gap-1 disabled:opacity-50"
 //               data-testid={`regen-${v?.symbol?.replace(/[\\/ &]/g, "_")}`}
 //             >
 //               <RefreshCw className={`w-3 h-3 ${generating === v.symbol ? "animate-spin" : ""}`} />
@@ -107,7 +107,7 @@
 //             {["BUY", "SELL"].includes(ver.action) && (
 //               <button
 //                 onClick={() => onLogTrade(v.symbol)}
-//                 className="text-xs font-bold text-[#0A1628] bg-[#D4AF37] hover:bg-[#F4C430] px-3 py-1 rounded-sm flex items-center gap-1"
+//                 className="text-xs font-bold text-eli-navy bg-eli-gold hover:bg-eli-gold-bright px-3 py-1 rounded-sm flex items-center gap-1"
 //                 data-testid={`log-trade-${v?.symbol?.replace(/[\\/ &]/g, "_")}`}
 //               >
 //                 <BookOpen className="w-3 h-3" /> Log Trade
@@ -118,7 +118,7 @@
 //       )}
 
 //       {v?.created_at && (
-//         <p className="text-[10px] text-[#94A3B8]/70 mt-2 font-mono">
+//         <p className="text-[10px] text-eli-muted/70 mt-2 font-mono">
 //           {new Date(v.created_at).toLocaleString()}
 //         </p>
 //       )}
@@ -198,17 +198,17 @@
 //       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
 //         <div>
 //           <div className="flex items-center gap-3">
-//             <Sparkles className="w-7 h-7 text-[#D4AF37]" />
-//             <h1 className="font-heading text-3xl font-bold text-white">AI Engine</h1>
+//             <Sparkles className="w-7 h-7 text-eli-gold" />
+//             <h1 className="font-heading text-3xl font-bold text-eli-text-white">AI Engine</h1>
 //           </div>
-//           <p className="text-sm text-[#94A3B8] mt-1">
+//           <p className="text-sm text-eli-muted mt-1">
 //             Live Claude Sonnet 4.5 verdicts on all 8 instruments using your strategy framework.
 //           </p>
 //         </div>
 //         <button
 //           onClick={refreshAll}
 //           disabled={generatingAll}
-//           className="flex items-center gap-2 px-5 py-2.5 bg-[#D4AF37] hover:bg-[#F4C430] text-[#0A1628] font-bold text-sm rounded-sm transition-colors disabled:opacity-50"
+//           className="flex items-center gap-2 px-5 py-2.5 bg-eli-gold hover:bg-eli-gold-bright text-eli-navy font-bold text-sm rounded-sm transition-colors disabled:opacity-50"
 //           data-testid="run-engine-btn"
 //         >
 //           <Sparkles className={`w-4 h-4 ${generatingAll ? "animate-spin" : ""}`} />
@@ -222,10 +222,10 @@
 //           <button
 //             key={a}
 //             onClick={() => setFilter(a)}
-//             className={`px-3 py-1.5 text-xs font-semibold tracking-wider uppercase rounded-sm border transition-colors ${
+//             className={`px-3 py-1.5 text-xs font-bold tracking-wider uppercase rounded-sm border transition-colors ${
 //               filter === a
-//                 ? "bg-[#D4AF37] text-[#0A1628] border-[#D4AF37]"
-//                 : "bg-[#1E3A5F]/30 text-[#94A3B8] border-[#1E3A5F] hover:border-[#D4AF37]/50"
+//                 ? "bg-eli-gold text-eli-navy border-eli-gold"
+//                 : "bg-eli-border/30 text-eli-muted border-eli-border hover:border-eli-gold/50"
 //             }`}
 //             data-testid={`filter-${a}`}
 //           >
@@ -236,14 +236,14 @@
 
 //       {loading ? (
 //         <div className="flex items-center justify-center h-64">
-//           <div className="w-8 h-8 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin" />
+//           <div className="w-8 h-8 border-2 border-eli-gold border-t-transparent rounded-full animate-spin" />
 //         </div>
 //       ) : filtered.length === 0 ? (
 //         <div className="eli-card p-12 text-center">
-//           <Eye className="w-12 h-12 text-[#D4AF37]/50 mx-auto mb-3" />
-//           <h3 className="text-lg font-semibold text-white">No verdicts yet</h3>
-//           <p className="text-sm text-[#94A3B8] mt-1">
-//             Click <span className="text-[#D4AF37]">Run AI Engine</span> to generate live verdicts for all 8 instruments.
+//           <Eye className="w-12 h-12 text-eli-gold/50 mx-auto mb-3" />
+//           <h3 className="text-lg font-bold text-eli-text-white">No verdicts yet</h3>
+//           <p className="text-sm text-eli-muted mt-1">
+//             Click <span className="text-eli-gold">Run AI Engine</span> to generate live verdicts for all 8 instruments.
 //           </p>
 //         </div>
 //       ) : (
@@ -334,7 +334,7 @@ const VerdictCard = ({
     >
       {/* High Confidence Alert */}
       {isHighConfidence && (
-        <div className="absolute -top-2 -right-2 bg-emerald-500 text-[#0A1628] text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-lg">
+        <div className="absolute -top-2 -right-2 bg-emerald-500 text-eli-navy text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-lg">
           <AlertCircle className="w-3 h-3" /> HIGH CONFIDENCE
         </div>
       )}
@@ -342,17 +342,17 @@ const VerdictCard = ({
       <div className="flex items-start justify-between mb-5">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="font-heading text-2xl font-bold text-white">
+            <h3 className="font-heading text-2xl font-bold text-eli-text-white">
               {v?.symbol}
             </h3>
-            <span className="text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+            <span className="text-[10px] font-bold text-eli-muted uppercase tracking-wider">
               {ac}
             </span>
           </div>
           {livePrice != null && (
-            <p className="text-sm text-[#94A3B8] mt-1 font-mono">
+            <p className="text-sm text-eli-muted mt-1 font-mono">
               Live:{" "}
-              <span className="text-white font-semibold">
+              <span className="text-eli-text-white font-bold">
                 {livePrice.toFixed(decimals)}
               </span>
             </p>
@@ -364,24 +364,24 @@ const VerdictCard = ({
       {/* Expanded Overview */}
       <div className="mb-5">
         <div className="flex items-center justify-between text-xs mb-2">
-          <span className="text-[#94A3B8] tracking-wider uppercase font-semibold">
+          <span className="text-eli-muted tracking-wider uppercase font-bold">
             Why This Is a Trade Right Now
           </span>
           {ver.confidence && (
-            <span className="text-[#D4AF37] font-mono font-bold">
+            <span className="text-eli-gold font-mono font-bold">
               {ver.confidence}% Confidence
             </span>
           )}
         </div>
-        <p className="text-sm text-[#CBD5E1] leading-relaxed">
+        <p className="text-sm text-eli-slate-300 leading-relaxed">
           {ver.overview || ver.reasoning || "No overview available yet."}
         </p>
       </div>
 
       {/* Natural Language AI Explanation Panel */}
       {ver.explanation && (
-        <div className="bg-[#1E3A5F]/40 border border-[#1E3A5F] rounded-sm p-4 mb-5">
-          <div className="flex items-center gap-2 text-xs text-[#94A3B8] mb-2">
+        <div className="bg-eli-border/40 border border-eli-border rounded-sm p-4 mb-5">
+          <div className="flex items-center gap-2 text-xs text-eli-muted mb-2">
             <BookOpen className="w-4 h-4" />
             AI DETAILED ANALYSIS
           </div>
@@ -395,11 +395,11 @@ const VerdictCard = ({
       {ver.confidence_breakdown && (
         <div className="grid grid-cols-2 gap-3 mb-5 text-xs">
           {Object.entries(ver.confidence_breakdown).map(([key, value]) => (
-            <div key={key} className="bg-[#0F172A] p-3 rounded-sm">
-              <p className="text-[#94A3B8] capitalize">
+            <div key={key} className="bg-eli-slate-900 p-3 rounded-sm">
+              <p className="text-eli-muted capitalize">
                 {key.replace(/_/g, " ")}
               </p>
-              <p className="font-mono text-white mt-0.5">{value}%</p>
+              <p className="font-mono text-eli-text-white mt-0.5">{value}%</p>
             </div>
           ))}
         </div>
@@ -408,11 +408,11 @@ const VerdictCard = ({
       {/* Key Levels */}
       {ver.key_levels && (
         <div className="grid grid-cols-3 gap-2 mb-5 text-center">
-          <div className="bg-[#1E3A5F]/40 rounded-sm py-3">
-            <p className="text-[10px] text-[#94A3B8] uppercase tracking-wider">
+          <div className="bg-eli-border/40 rounded-sm py-3">
+            <p className="text-[10px] text-eli-muted uppercase tracking-wider">
               Entry
             </p>
-            <p className="text-sm font-mono text-white">
+            <p className="text-sm font-mono text-eli-text-white">
               {Number(ver.key_levels.entry || 0).toFixed(decimals)}
             </p>
           </div>
@@ -436,11 +436,11 @@ const VerdictCard = ({
       )}
 
       {/* Action Buttons */}
-      <div className="flex flex-wrap gap-2 pt-4 border-t border-[#1E3A5F]">
+      <div className="flex flex-wrap gap-2 pt-4 border-t border-eli-border">
         <button
           onClick={() => onGenerate(v.symbol)}
           disabled={generating === v.symbol}
-          className="flex-1 text-xs py-2.5 border border-[#1E3A5F] hover:border-[#D4AF37]/60 text-[#94A3B8] hover:text-white rounded-sm flex items-center justify-center gap-2 disabled:opacity-50"
+          className="flex-1 text-xs py-2.5 border border-eli-border hover:border-eli-gold/60 text-eli-muted hover:text-eli-text-white rounded-sm flex items-center justify-center gap-2 disabled:opacity-50"
         >
           <RefreshCw
             className={`w-3.5 h-3.5 ${generating === v.symbol ? "animate-spin" : ""}`}
@@ -450,7 +450,7 @@ const VerdictCard = ({
 
         <button
           onClick={() => onSimulateTrade(v.symbol)}
-          className="flex-1 bg-[#1E3A5F] hover:bg-[#253F66] text-white text-xs py-2.5 rounded-sm flex items-center justify-center gap-2"
+          className="flex-1 bg-eli-border hover:bg-eli-navy-5 text-eli-text-white text-xs py-2.5 rounded-sm flex items-center justify-center gap-2"
         >
           <PlayCircle className="w-4 h-4" />
           Simulate Trade
@@ -459,7 +459,7 @@ const VerdictCard = ({
         {["BULLISH", "BEARISH", "BUY", "SELL"].includes(normalizedAction) && (
           <button
             onClick={() => onLogTrade(v.symbol)}
-            className="flex-1 bg-[#D4AF37] hover:bg-[#F4C430] text-[#0A1628] font-bold text-xs py-2.5 rounded-sm flex items-center justify-center gap-2"
+            className="flex-1 bg-eli-gold hover:bg-eli-gold-bright text-eli-navy font-bold text-xs py-2.5 rounded-sm flex items-center justify-center gap-2"
             data-testid={`log-trade-${v?.symbol?.replace(/[\\/ &]/g, "_")}`}
           >
             <BookOpen className="w-4 h-4" />
@@ -469,7 +469,7 @@ const VerdictCard = ({
       </div>
 
       {v?.created_at && (
-        <p className="text-[10px] text-[#94A3B8]/60 mt-4 font-mono text-center">
+        <p className="text-[10px] text-eli-muted/60 mt-4 font-mono text-center">
           Generated: {new Date(v.created_at).toLocaleString()}
         </p>
       )}
@@ -577,12 +577,12 @@ export default function TradeSignals() {
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <Sparkles className="w-8 h-8 text-[#D4AF37]" />
-            <h1 className="font-heading text-4xl font-bold text-white">
+            <Sparkles className="w-8 h-8 text-eli-gold" />
+            <h1 className="font-heading text-4xl font-bold text-eli-text-white">
               AI Engine
             </h1>
           </div>
-          <p className="text-[#94A3B8] mt-1">
+          <p className="text-eli-muted mt-1">
             Powered by Claude Sonnet 4.5 • Real-time analysis across all
             instruments
           </p>
@@ -591,7 +591,7 @@ export default function TradeSignals() {
         <button
           onClick={refreshAll}
           disabled={generatingAll}
-          className="flex items-center gap-2 px-6 py-3 bg-[#D4AF37] hover:bg-[#F4C430] text-[#0A1628] font-bold rounded-sm transition-all disabled:opacity-50"
+          className="flex items-center gap-2 px-6 py-3 bg-eli-gold hover:bg-eli-gold-bright text-eli-navy font-bold rounded-sm transition-all disabled:opacity-50"
           data-testid="run-engine-btn"
         >
           <Sparkles
@@ -607,10 +607,10 @@ export default function TradeSignals() {
           <button
             key={a}
             onClick={() => setFilter(a)}
-            className={`px-4 py-2 text-xs font-semibold tracking-wider uppercase rounded-sm border transition-colors ${
+            className={`px-4 py-2 text-xs font-bold tracking-wider uppercase rounded-sm border transition-colors ${
               filter === a
-                ? "bg-[#D4AF37] text-[#0A1628] border-[#D4AF37]"
-                : "bg-[#1E3A5F]/30 text-[#94A3B8] border-[#1E3A5F] hover:border-[#D4AF37]/50"
+                ? "bg-eli-gold text-eli-navy border-eli-gold"
+                : "bg-eli-border/30 text-eli-muted border-eli-border hover:border-eli-gold/50"
             }`}
           >
             {a} <span className="opacity-70">({counts[a]})</span>
@@ -620,13 +620,13 @@ export default function TradeSignals() {
 
       {loading ? (
         <div className="flex items-center justify-center h-64">
-          <div className="w-9 h-9 border-4 border-[#D4AF37] border-t-transparent rounded-full animate-spin" />
+          <div className="w-9 h-9 border-4 border-eli-gold border-t-transparent rounded-full animate-spin" />
         </div>
       ) : filtered.length === 0 ? (
         <div className="eli-card p-16 text-center">
-          <Eye className="w-16 h-16 text-[#D4AF37]/40 mx-auto mb-4" />
-          <h3 className="text-2xl font-semibold text-white">No verdicts yet</h3>
-          <p className="text-[#94A3B8] mt-2">
+          <Eye className="w-16 h-16 text-eli-gold/40 mx-auto mb-4" />
+          <h3 className="text-2xl font-bold text-eli-text-white">No verdicts yet</h3>
+          <p className="text-eli-muted mt-2">
             Click "Run AI Engine Now" to generate fresh signals
           </p>
         </div>

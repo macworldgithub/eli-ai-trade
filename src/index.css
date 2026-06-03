@@ -7,13 +7,13 @@
 @layer base {
   :root {
     /* EliAI Trade — Navy + Gold palette */
-    --background: 215 60% 6%;      /* #0A1628 */
+    --background: 215 60% 6%;      /* rgba(var(--eli-navy)) */
     --foreground: 210 40% 98%;
-    --card: 215 50% 9%;            /* #0E1F36 */
+    --card: 215 50% 9%;            /* rgba(var(--eli-navy-2)) */
     --card-foreground: 210 40% 98%;
     --popover: 215 50% 9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 45 76% 53%;         /* gold #D4AF37 */
+    --primary: 45 76% 53%;         /* gold rgba(var(--eli-gold)) */
     --primary-foreground: 215 60% 6%;
     --secondary: 215 40% 14%;
     --secondary-foreground: 210 40% 98%;
@@ -36,12 +36,63 @@
     --bullish: 142 76% 42%;
     --bearish: 0 84% 60%;
     --warning: 45 76% 53%;
-    --eli-navy: #0A1628;
-    --eli-navy-2: #0E1F36;
-    --eli-navy-3: #14274A;
-    --eli-gold: #D4AF37;
-    --eli-gold-bright: #F4C430;
+    --eli-navy: 10, 22, 40;
+    --eli-navy-2: 14, 31, 54;
+    --eli-navy-3: 20, 39, 74;
+    --eli-navy-4: 20, 37, 63;
+    --eli-navy-5: 37, 63, 102;
+    --eli-border: 30, 58, 95;
+    --eli-gold: 212, 175, 55;
+    --eli-gold-bright: 244, 196, 48;
+    --eli-muted: 148, 163, 184;
+    --eli-muted-light: 161, 161, 170;
+    --eli-tooltip: #121215;
+    --eli-slate-300: #CBD5E1;
+    --eli-slate-900: #0F172A;
+    --eli-text-white: #ffffff;
+    --eli-overlay-5: rgba(255, 255, 255, 0.05);
+    --eli-overlay-10: rgba(255, 255, 255, 0.1);
+    --eli-overlay-20: rgba(255, 255, 255, 0.2);
   }
+}
+.light {
+  --background: 0 0% 100%;
+  --foreground: 0 0% 0%;
+  --card: 0 0% 95%;
+  --card-foreground: 0 0% 10%;
+  --popover: 0 0% 95%;
+  --popover-foreground: 0 0% 10%;
+  --primary: 210 40% 50%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 30% 90%;
+  --secondary-foreground: 0 0% 0%;
+  --muted: 210 30% 90%;
+  --muted-foreground: 210 15% 35%;
+  --accent: 210 40% 50%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 70% 55%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 210 30% 80%;
+  --input: 210 30% 80%;
+  --ring: 210 40% 50%;
+  
+  --eli-navy: 248, 250, 252;
+  --eli-navy-2: 255, 255, 255;
+  --eli-navy-3: 241, 245, 249;
+  --eli-navy-4: 226, 232, 240;
+  --eli-navy-5: 203, 213, 225;
+  --eli-border: 226, 232, 240;
+  --eli-gold: 212, 175, 55;
+  --eli-gold-bright: 244, 196, 48;
+  --eli-muted: 100, 116, 139;
+  --eli-muted-light: 148 163 184;
+  --eli-tooltip: #ffffff;
+  --eli-slate-300: #334155;
+  --eli-slate-900: #ffffff;
+  --eli-text-white: #0f172a;
+  --eli-overlay-5: rgba(0, 0, 0, 0.05);
+  --eli-overlay-10: rgba(0, 0, 0, 0.1);
+  --eli-overlay-20: rgba(0, 0, 0, 0.2);
 }
 
 @layer base {
@@ -50,12 +101,12 @@
   }
   
   html {
-    @apply bg-[#0A1628] text-[#F8F9FA];
+    @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))];
     font-feature-settings: "ss01", "ss02", "cv01", "cv02";
   }
 
   body {
-    @apply bg-[#0A1628] text-[#F8F9FA] antialiased;
+    @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))] antialiased;
     font-family: 'IBM Plex Sans', sans-serif;
     margin: 0;
     min-height: 100vh;
@@ -83,34 +134,34 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #0A1628;
+  background: rgba(var(--eli-navy));
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1E3A5F;
+  background: rgba(var(--eli-border));
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #D4AF37;
+  background: rgba(var(--eli-gold));
 }
 
 /* EliAI brand helpers */
 .eli-card {
-  @apply bg-[#0E1F36] border border-[#1E3A5F] rounded-sm;
+  @apply bg-eli-navy-2 border border-eli-border rounded-sm;
 }
 .eli-card-hover {
   transition: border-color 0.2s ease, transform 0.15s ease;
 }
 .eli-card-hover:hover {
-  @apply border-[#D4AF37]/60;
+  @apply border-eli-gold border-opacity-60;
   transform: translateY(-1px);
 }
-.eli-gold-text { color: #D4AF37; }
-.eli-gold-bg { background-color: #D4AF37; }
-.eli-gold-border { border-color: #D4AF37; }
+.eli-gold-text { color: rgba(var(--eli-gold)); }
+.eli-gold-bg { background-color: rgba(var(--eli-gold)); }
+.eli-gold-border { border-color: rgba(var(--eli-gold)); }
 .eli-gradient-text {
-  background: linear-gradient(135deg, #F4C430 0%, #D4AF37 100%);
+  background: linear-gradient(135deg, rgba(var(--eli-gold-bright)) 0%, rgba(var(--eli-gold)) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -193,12 +244,12 @@
 
 /* Grid border effect */
 .grid-border {
-  @apply border border-white/10;
+  @apply border border-eli-overlay-10;
 }
 
 /* Glass effect */
 .glass {
-  @apply bg-[#0E1F36]/80 backdrop-blur-xl border border-[#1E3A5F];
+  @apply bg-[rgba(var(--eli-navy-2))] bg-opacity-80 backdrop-blur-xl border border-eli-border;
 }
 
 /* Trading terminal aesthetic */
@@ -213,15 +264,15 @@
 }
 
 .data-table th {
-  @apply text-xs uppercase tracking-[0.2em] text-[#A1A1AA] font-medium text-left py-3 px-4 border-b border-white/10;
+  @apply text-xs uppercase tracking-[0.2em] text-[rgba(var(--eli-muted-light))] font-medium text-left py-3 px-4 border-b border-eli-overlay-10;
 }
 
 .data-table td {
-  @apply py-3 px-4 border-b border-white/5 font-mono tabular-nums;
+  @apply py-3 px-4 border-b border-eli-overlay-5 font-mono tabular-nums;
 }
 
 .data-table tr:hover {
-  @apply bg-white/5;
+  @apply bg-eli-overlay-5;
 }
 
 /* Card hover effect */
@@ -257,11 +308,11 @@ button:active {
 
 /* Chart tooltip */
 .recharts-tooltip-wrapper {
-  @apply !bg-[#121215] !border !border-white/10 !rounded-sm !shadow-xl;
+  @apply !bg-[var(--eli-tooltip)] !border !border-eli-overlay-10 !rounded-sm !shadow-xl;
 }
 
 .recharts-default-tooltip {
-  @apply !bg-[#121215] !border-none !rounded-sm;
+  @apply !bg-[var(--eli-tooltip)] !border-none !rounded-sm;
 }
 
 /* Session badge styles */
@@ -270,7 +321,7 @@ button:active {
 }
 
 .session-closed {
-  @apply bg-white/5 text-[#A1A1AA] border border-white/10;
+  @apply bg-eli-overlay-5 text-[rgba(var(--eli-muted-light))] border border-eli-overlay-10;
 }
 
 /* Impact indicators */
@@ -291,4 +342,12 @@ button:active {
   .responsive-text {
     @apply text-sm;
   }
+}
+
+/* Light mode overrides */
+.light {
+  @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))];
+}
+.light body {
+  @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))];
 }

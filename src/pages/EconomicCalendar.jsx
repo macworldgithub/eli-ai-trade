@@ -172,6 +172,7 @@
 //   );
 // }
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Calendar,
   TrendingUp,
@@ -216,6 +217,7 @@ const ImpactBadge = ({ impact }) => {
 };
 
 export default function EconomicCalendar() {
+  const navigate = useNavigate();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("ALL"); // Impact Level
@@ -226,7 +228,84 @@ export default function EconomicCalendar() {
     setLoading(true);
     try {
       const r = await calendarAPI.getEvents();
-      setEvents(r.data.events || []);
+      const apiEvents = r.data.events || [];
+
+      // Inject Mock Indices Events (S&P 500, NASDAQ, FTSE, ASX)
+      const now = new Date();
+      const mockIndicesEvents = [
+        {
+          id: "idx-spx",
+          title: "S&P 500 E-mini Rollover",
+          date: new Date(new Date().setHours(now.getHours() + 2, 0, 0)).toISOString(),
+          stars: 3,
+          impact: "HIGH",
+          currency: "SPX",
+          symbol: "SPX",
+          description: "Quarterly futures contract rollover affecting S&P 500 liquidity and volume.",
+          aiVolatility: 1.2,
+          relatedSymbol: "S&P 500"
+        },
+        {
+          id: "idx-ndx",
+          title: "NASDAQ Tech Sector Earnings",
+          date: new Date(new Date().setHours(now.getHours() + 5, 0, 0)).toISOString(),
+          stars: 3,
+          impact: "HIGH",
+          currency: "NDX",
+          symbol: "NDX",
+          description: "Key earnings reports from major NASDAQ 100 constituents expected after market close.",
+          aiVolatility: 2.5,
+          relatedSymbol: "NAS100"
+        },
+        {
+          id: "idx-ftse",
+          title: "FTSE 100 Rebalancing",
+          date: new Date(new Date().setHours(now.getHours() + 18, 0, 0)).toISOString(),
+          stars: 2,
+          impact: "MEDIUM",
+          currency: "UKX",
+          symbol: "UKX",
+          description: "Index weighting adjustments for UK large caps taking effect at open.",
+          aiVolatility: 0.8,
+          relatedSymbol: "FTSE 100"
+        },
+        {
+          id: "idx-asx",
+          title: "ASX 200 Financials Review",
+          date: new Date(new Date().setHours(now.getHours() + 12, 0, 0)).toISOString(),
+          stars: 2,
+          impact: "MEDIUM",
+          currency: "ASX",
+          symbol: "ASX",
+          description: "Quarterly review of banking sector capital requirements.",
+          aiVolatility: 0.6,
+          relatedSymbol: "ASX 200"
+        }
+      ];
+
+      const generateMockChart = () => {
+        return Array.from({ length: 24 }).map(() => {
+          const isUp = Math.random() > 0.45;
+          return {
+            height: 10 + Math.random() * 50,
+            bottomOffset: 5 + Math.random() * 30,
+            isUp,
+          };
+        });
+      };
+
+      const allEvents = [...apiEvents, ...mockIndicesEvents].map(e => ({
+        ...e,
+        historic: e.historic || {
+          move: (Math.random() * 1.5 + 0.3).toFixed(2),
+          direction: Math.random() > 0.5 ? "up" : "down",
+          chart: generateMockChart()
+        }
+      })).sort(
+        (a, b) => new Date(a.date) - new Date(b.date)
+      );
+
+      setEvents(allEvents);
     } catch (e) {
       console.error(e);
     }
@@ -280,17 +359,14 @@ export default function EconomicCalendar() {
           : null);
 
     if (symbol) {
-      window.open(`/markets?symbol=${encodeURIComponent(symbol)}`, "_blank");
+      navigate(`/markets?symbol=${encodeURIComponent(symbol)}`);
     } else {
       setSelectedEvent(event);
     }
   };
 
   const openRiskCalculator = (event) => {
-    window.open(
-      `/risk-calculator?event=${encodeURIComponent(event.title)}&impact=${event.impact}`,
-      "_blank",
-    );
+    navigate(`/risk-calculator?event=${encodeURIComponent(event.title)}&impact=${event.impact}`);
   };
 
   return (
@@ -323,11 +399,10 @@ export default function EconomicCalendar() {
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-5 py-2 text-sm font-bold uppercase tracking-wider rounded-sm border transition-all ${
-              filter === f
-                ? "bg-eli-gold text-eli-navy border-eli-gold"
-                : "bg-eli-border/30 text-eli-muted border-eli-border hover:border-eli-gold"
-            }`}
+            className={`px-5 py-2 text-sm font-bold uppercase tracking-wider rounded-sm border transition-all ${filter === f
+              ? "bg-eli-gold text-eli-navy border-eli-gold"
+              : "bg-eli-border/30 text-eli-muted border-eli-border hover:border-eli-gold"
+              }`}
           >
             {f === "ALL"
               ? "All Events"
@@ -343,11 +418,10 @@ export default function EconomicCalendar() {
           <button
             key={asset}
             onClick={() => setAssetFilter(asset)}
-            className={`px-5 py-2 text-sm font-bold uppercase tracking-wider rounded-sm border transition-all ${
-              assetFilter === asset
-                ? "bg-eli-gold text-eli-navy border-eli-gold"
-                : "bg-eli-border/30 text-eli-muted border-eli-border hover:border-eli-gold"
-            }`}
+            className={`px-5 py-2 text-sm font-bold uppercase tracking-wider rounded-sm border transition-all ${assetFilter === asset
+              ? "bg-eli-gold text-eli-navy border-eli-gold"
+              : "bg-eli-border/30 text-eli-muted border-eli-border hover:border-eli-gold"
+              }`}
           >
             {asset}
           </button>
@@ -390,9 +464,16 @@ export default function EconomicCalendar() {
 
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-3">
-                            <span className="font-bold text-eli-text-white text-[15px]">
+                            <button
+                              onClick={(ev) => {
+                                ev.stopPropagation();
+                                openReferencedMarket(e);
+                              }}
+                              className="font-bold text-eli-text-white text-[15px] hover:text-eli-gold transition-colors text-left flex items-center gap-1.5"
+                            >
                               {e.title}
-                            </span>
+                              <ExternalLink className="w-3.5 h-3.5 opacity-50" />
+                            </button>
                             {e.currency && (
                               <span className="text-eli-gold font-mono">
                                 ({e.currency})
@@ -411,22 +492,34 @@ export default function EconomicCalendar() {
                         <StarsBadge stars={e.stars || 2} />
                         <ImpactBadge impact={e.impact || "MEDIUM"} />
 
-                        {e.aiVolatility && (
+                        {e.aiVolatility && assetFilter === "INDICES" && (
                           <div className="text-xs px-3 py-1 bg-eli-border rounded-sm font-mono text-emerald-400">
                             AI ±{e.aiVolatility}%
                           </div>
                         )}
 
-                        <button
-                          onClick={(ev) => {
-                            ev.stopPropagation();
-                            openReferencedMarket(e);
-                          }}
-                          className="text-xs flex items-center gap-1.5 bg-eli-gold/10 hover:bg-eli-gold/20 text-eli-gold px-4 py-2 rounded-sm"
-                        >
-                          <BarChart3 className="w-4 h-4" />
-                          Market
-                        </button>
+                        <div className="flex items-center gap-2 ml-2">
+                          <button
+                            onClick={(ev) => {
+                              ev.stopPropagation();
+                              openReferencedMarket(e);
+                            }}
+                            className="text-xs flex items-center gap-1.5 bg-eli-gold/10 hover:bg-eli-gold/20 text-eli-gold px-3 py-2 rounded-sm transition-colors"
+                          >
+                            <BarChart3 className="w-4 h-4" />
+                            Market
+                          </button>
+                          <button
+                            onClick={(ev) => {
+                              ev.stopPropagation();
+                              openRiskCalculator(e);
+                            }}
+                            className="text-xs flex items-center gap-1.5 bg-eli-gold/10 hover:bg-eli-gold/20 text-eli-gold px-3 py-2 rounded-sm transition-colors"
+                          >
+                            <Target className="w-4 h-4" />
+                            Risk
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -473,24 +566,60 @@ export default function EconomicCalendar() {
                 )}
               </div>
 
+              <div className="grid grid-cols-3 gap-3 pt-2">
+                <div className="bg-eli-navy-3 border border-eli-border rounded-sm p-4 text-center">
+                  <div className="text-[10px] uppercase tracking-wider text-eli-muted mb-1">Previous</div>
+                  <div className="font-mono text-lg font-bold text-eli-text-white">{selectedEvent.previous || "—"}</div>
+                </div>
+                <div className="bg-eli-navy-3 border border-eli-border rounded-sm p-4 text-center relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-8 h-8 bg-eli-gold/10 rotate-45 transform translate-x-4 -translate-y-4" />
+                  <div className="text-[10px] uppercase tracking-wider text-eli-muted mb-1">Forecast</div>
+                  <div className="font-mono text-lg font-bold text-eli-gold">{selectedEvent.forecast || "—"}</div>
+                </div>
+                <div className="bg-eli-navy-3 border border-eli-border rounded-sm p-4 text-center">
+                  <div className="text-[10px] uppercase tracking-wider text-eli-muted mb-1">Actual</div>
+                  <div className="font-mono text-lg font-bold text-eli-text-white">{selectedEvent.actual || "TBD"}</div>
+                </div>
+              </div>
+
               {selectedEvent.description && (
-                <p className="text-eli-slate-300 leading-relaxed text-[15px]">
+                <p className="text-eli-slate-300 leading-relaxed text-[15px] bg-eli-border/20 p-5 rounded-sm border border-eli-border/50">
                   {selectedEvent.description}
                 </p>
               )}
 
               {/* Historic Reaction */}
               {selectedEvent.historic && (
-                <div className="bg-eli-border/40 border border-eli-border rounded-sm p-5">
-                  <h4 className="uppercase text-xs tracking-wider text-eli-muted mb-3">
-                    Historical Market Reaction
-                  </h4>
-                  <p className="text-emerald-400 font-medium">
-                    +{selectedEvent.historic.move}% average move in first 2
-                    hours
-                  </p>
-                  <div className="h-48 mt-4 bg-eli-slate-900 rounded flex items-center justify-center text-xs text-eli-muted">
-                    [ Post-Event Price Action Snapshot ]
+                <div className="bg-eli-border/40 border border-eli-border rounded-sm p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="uppercase text-xs font-bold tracking-wider text-eli-muted flex items-center gap-2">
+                      <TrendingUp className="w-4 h-4 text-eli-gold" />
+                      Historical Market Reaction
+                    </h4>
+                    <span className={`font-mono text-sm font-bold px-3 py-1 rounded-sm ${selectedEvent.historic.direction === 'up' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
+                      {selectedEvent.historic.direction === 'up' ? '+' : '-'}{selectedEvent.historic.move}%
+                      <span className="text-xs text-eli-muted ml-1 font-normal uppercase tracking-wider">avg move (2h)</span>
+                    </span>
+                  </div>
+
+                  <div className="h-44 mt-4 bg-eli-navy-3/80 border border-eli-border rounded flex items-end justify-between px-3 pt-6 pb-2 relative group cursor-crosshair">
+                    <div className="absolute top-2 left-3 text-[10px] text-eli-muted font-mono tracking-widest uppercase">
+                      {selectedEvent.relatedSymbol || `${selectedEvent.currency || 'USD'}`} • 5m Post-Event Snapshot
+                    </div>
+                    {/* Grid lines */}
+                    <div className="absolute inset-0 border-y border-eli-border/30 border-dashed pointer-events-none" style={{ top: '33%', height: '33%' }} />
+
+                    {selectedEvent.historic.chart.map((candle, i) => (
+                      <div key={i} className="flex flex-col items-center justify-end w-3 h-full relative">
+                        {/* Wick */}
+                        <div className={`w-[1px] absolute top-2 bottom-2 ${candle.isUp ? 'bg-emerald-500/30' : 'bg-red-500/30'}`} />
+                        {/* Body */}
+                        <div
+                          className={`w-full z-10 rounded-sm shadow-sm transition-all duration-300 hover:brightness-125 ${candle.isUp ? 'bg-emerald-500' : 'bg-red-500'}`}
+                          style={{ height: `${candle.height}%`, marginBottom: `${candle.bottomOffset}%` }}
+                        />
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}

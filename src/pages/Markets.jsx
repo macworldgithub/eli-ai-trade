@@ -265,20 +265,13 @@ import {
   RefreshCw,
   BarChart3,
   Zap,
+  LayoutGrid,
+  List as ListIcon,
+  Plus,
+  Minus as MinusIcon,
 } from "lucide-react";
 import { marketAPI } from "../lib/api";
-import {
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-  ReferenceLine,
-} from "recharts";
+import TradingViewChart from "../components/TradingViewChart";
 
 const RANGES = [
   { key: "1d", label: "1D" },
@@ -295,9 +288,11 @@ export default function Markets() {
   const [tab, setTab] = useState("forex");
   const [selected, setSelected] = useState(null);
   const [compareSymbols, setCompareSymbols] = useState([]); // For comparison mode
+  const [compareData, setCompareData] = useState([]);
   const [candles, setCandles] = useState([]);
   const [range, setRange] = useState("7d");
   const [layout, setLayout] = useState("single");
+  const [viewMode, setViewMode] = useState("list"); // 'list' | 'heatmap'
   const [loading, setLoading] = useState(true);
   const [loadingChart, setLoadingChart] = useState(false);
 
@@ -326,19 +321,34 @@ export default function Markets() {
   useEffect(() => {
     if (!selected) return;
     setLoadingChart(true);
-    marketAPI
-      .getHistorical(selected, range)
-      .then((r) => {
-        setCandles(r.data.candles || []);
+    
+    const fetchPromises = [
+      marketAPI.getHistorical(selected, range),
+      ...compareSymbols.map(sym => marketAPI.getHistorical(sym, range))
+    ];
+
+    Promise.all(fetchPromises)
+      .then((results) => {
+        setCandles(results[0].data.candles || []);
+        const compData = results.slice(1).map((r, i) => ({
+          symbol: compareSymbols[i],
+          data: r.data.candles || []
+        }));
+        setCompareData(compData);
+
         // Mock AI Pattern Recognition
         setAiPatterns([
           { name: "Bullish Engulfing", prob: 78, type: "bullish" },
           { name: "Support Bounce", prob: 65, type: "bullish" },
         ]);
       })
-      .catch(() => setCandles([]))
+      .catch((e) => {
+        console.error(e);
+        setCandles([]);
+        setCompareData([]);
+      })
       .finally(() => setLoadingChart(false));
-  }, [selected, range]);
+  }, [selected, range, compareSymbols]);
 
   const list = instruments.filter((i) => i.asset_class === tab);
   const current = instruments.find((i) => i.symbol === selected);
@@ -359,7 +369,9 @@ export default function Markets() {
       ? chartData[chartData.length - 1].close >= chartData[0].close
       : true;
 
-  const toggleCompare = (symbol) => {
+  const toggleCompare = (e, symbol) => {
+    e.stopPropagation();
+    if (symbol === selected) return;
     if (compareSymbols.includes(symbol)) {
       setCompareSymbols(compareSymbols.filter((s) => s !== symbol));
     } else if (compareSymbols.length < 3) {
@@ -421,48 +433,112 @@ export default function Markets() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        {/* Instrument List */}
-        <div className="lg:col-span-3 eli-card overflow-hidden">
+        {/* Instrument List / Heatmap */}
+        <div className="lg:col-span-3 eli-card overflow-hidden flex flex-col">
           <div className="px-4 py-3 border-b border-eli-border flex items-center justify-between">
-            <h3 className="text-sm font-medium text-eli-text-white">
-              {tab.toUpperCase()}
-            </h3>
-            <span className="text-xs text-eli-muted">{list.length}</span>
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm font-medium text-eli-text-white">
+                {tab.toUpperCase()}
+              </h3>
+              <span className="text-xs text-eli-muted">{list.length}</span>
+            </div>
+            <div className="flex bg-eli-navy rounded-sm p-0.5 border border-eli-border">
+              <button
+                onClick={() => setViewMode("list")}
+                className={`p-1 rounded-sm ${viewMode === "list" ? "bg-eli-border text-eli-text-white" : "text-eli-muted hover:text-eli-text-white"}`}
+              >
+                <ListIcon className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => setViewMode("heatmap")}
+                className={`p-1 rounded-sm ${viewMode === "heatmap" ? "bg-eli-border text-eli-text-white" : "text-eli-muted hover:text-eli-text-white"}`}
+              >
+                <LayoutGrid className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
-          <div className="divide-y divide-eli-border max-h-[70vh] overflow-auto">
-            {list.map((i) => {
-              const pos = i.change_percent >= 0;
-              const isSel = i.symbol === selected;
-              return (
-                <button
-                  key={i.symbol}
-                  onClick={() => setSelected(i.symbol)}
-                  className={`w-full px-4 py-3 flex items-center justify-between hover:bg-eli-border/40 transition-colors text-left ${
-                    isSel ? "bg-eli-gold/10 border-l-2 border-eli-gold" : ""
-                  }`}
-                >
-                  <div>
-                    <p className="font-mono font-bold text-eli-text-white">
-                      {i.symbol}
-                    </p>
-                    <p className="text-[10px] text-eli-muted truncate">
-                      {i.name}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-mono text-eli-text-white tabular-nums">
-                      {i.price.toFixed(decimals)}
-                    </p>
-                    <p
-                      className={`text-xs font-mono ${pos ? "text-emerald-400" : "text-red-400"}`}
+
+          <div className="flex-1 overflow-auto max-h-[70vh]">
+            {viewMode === "list" ? (
+              <div className="divide-y divide-eli-border">
+                {list.map((i) => {
+                  const pos = i.change_percent >= 0;
+                  const isSel = i.symbol === selected;
+                  const isComp = compareSymbols.includes(i.symbol);
+                  return (
+                    <div
+                      key={i.symbol}
+                      onClick={() => setSelected(i.symbol)}
+                      className={`w-full px-4 py-3 flex items-center justify-between hover:bg-eli-border/40 transition-colors cursor-pointer text-left ${
+                        isSel ? "bg-eli-gold/10 border-l-2 border-eli-gold" : ""
+                      }`}
                     >
-                      {pos ? "+" : ""}
-                      {i.change_percent?.toFixed(2)}%
-                    </p>
-                  </div>
-                </button>
-              );
-            })}
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <p className="font-mono font-bold text-eli-text-white">
+                            {i.symbol}
+                          </p>
+                          {!isSel && (
+                            <button
+                              onClick={(e) => toggleCompare(e, i.symbol)}
+                              className={`p-0.5 rounded-sm border ${isComp ? "bg-eli-border border-eli-border text-eli-text-white" : "border-transparent text-eli-muted hover:border-eli-border hover:bg-eli-navy"}`}
+                              title={isComp ? "Remove Comparison" : "Add to Comparison"}
+                            >
+                              {isComp ? <MinusIcon className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
+                            </button>
+                          )}
+                        </div>
+                        <p className="text-[10px] text-eli-muted truncate">
+                          {i.name}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-mono text-eli-text-white tabular-nums">
+                          {i.price.toFixed(decimals)}
+                        </p>
+                        <p
+                          className={`text-xs font-mono ${pos ? "text-emerald-400" : "text-red-400"}`}
+                        >
+                          {pos ? "+" : ""}
+                          {i.change_percent?.toFixed(2)}%
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-2 p-3">
+                {list.map((i) => {
+                  const pos = i.change_percent >= 0;
+                  const isSel = i.symbol === selected;
+                  const isComp = compareSymbols.includes(i.symbol);
+                  return (
+                    <div
+                      key={i.symbol}
+                      onClick={() => setSelected(i.symbol)}
+                      className={`relative p-3 rounded-md flex flex-col items-center justify-center cursor-pointer transition-transform hover:scale-105 ${
+                        pos ? "bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/30" : "bg-red-500/20 hover:bg-red-500/30 border border-red-500/30"
+                      } ${isSel ? "ring-2 ring-eli-gold" : ""}`}
+                    >
+                      {!isSel && (
+                        <button
+                          onClick={(e) => toggleCompare(e, i.symbol)}
+                          className={`absolute top-1 right-1 p-0.5 rounded-sm bg-black/20 hover:bg-black/40 text-white/70 hover:text-white transition-colors`}
+                          title={isComp ? "Remove Comparison" : "Add to Comparison"}
+                        >
+                          {isComp ? <MinusIcon className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
+                        </button>
+                      )}
+                      <span className="font-mono font-bold text-white mb-1">{i.symbol}</span>
+                      <span className={`font-mono text-sm ${pos ? "text-emerald-300" : "text-red-300"}`}>
+                        {pos ? "+" : ""}{i.change_percent?.toFixed(2)}%
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
 
@@ -539,58 +615,9 @@ export default function Markets() {
                     <RefreshCw className="w-8 h-8 animate-spin text-eli-gold" />
                   </div>
                 ) : (
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={chartData}>
-                      <defs>
-                        <linearGradient
-                          id="priceGrad"
-                          x1="0"
-                          y1="0"
-                          x2="0"
-                          y2="1"
-                        >
-                          <stop
-                            offset="0%"
-                            stopColor={positive ? "#10B981" : "#EF4444"}
-                            stopOpacity={0.35}
-                          />
-                          <stop
-                            offset="100%"
-                            stopColor={positive ? "#10B981" : "#EF4444"}
-                            stopOpacity={0}
-                          />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid stroke="#1E3A5F" strokeDasharray="3 3" />
-                      <XAxis dataKey="idx" hide />
-                      <YAxis
-                        domain={["dataMin", "dataMax"]}
-                        tickFormatter={(v) => v.toFixed(decimals)}
-                      />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: "#0F172A",
-                          border: "1px solid #1E3A5F",
-                        }}
-                      />
-
-                      <Area
-                        type="monotone"
-                        dataKey="close"
-                        stroke={positive ? "#10B981" : "#EF4444"}
-                        strokeWidth={2.5}
-                        fill="url(#priceGrad)"
-                      />
-
-                      {/* Volume */}
-                      <Bar
-                        dataKey="volume"
-                        fill="#1E3A5F"
-                        opacity={0.6}
-                        yAxisId="volume"
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
+                  <div className="w-full h-full">
+                    <TradingViewChart data={chartData} positive={positive} aiPatterns={aiPatterns} compareData={compareData} />
+                  </div>
                 )}
               </div>
 

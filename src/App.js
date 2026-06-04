@@ -13,10 +13,12 @@ import {
   Bell,
   Sun,
   Moon,
+  LogOut,
 } from "lucide-react";
 import "@/App.css";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useTheme } from "./context/ThemeContext";
+import { useAuth } from "./context/AuthContext";
 import { toast } from "sonner";
 
 import Dashboard from "./pages/Dashboard";
@@ -43,7 +45,7 @@ const navItems = [
   { path: "/alerts", icon: Bell, label: "Alerts" },
 ];
 
-const Sidebar = ({ isOpen, setIsOpen }) => {
+const Sidebar = ({ isOpen, setIsOpen, onLogout }) => {
   const location = useLocation();
   return (
     <>
@@ -100,11 +102,19 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             })}
           </nav>
 
-          <div className="p-4 border-t border-eli-border">
+          <div className="p-4 border-t border-eli-border space-y-3">
             <div className="flex items-center gap-2 text-xs text-eli-muted">
               <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
               <span>Live data · 8 instruments</span>
             </div>
+            <button
+              onClick={onLogout}
+              className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 rounded-sm transition-colors border border-transparent hover:border-red-500/30"
+              data-testid="sidebar-logout"
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="font-medium">Logout</span>
+            </button>
           </div>
         </div>
       </aside>
@@ -137,7 +147,7 @@ const WorldClocks = () => {
   );
 };
 
-const Header = ({ setIsOpen }) => {
+const Header = ({ setIsOpen, onLogout }) => {
   const { theme, toggleTheme } = useTheme();
   return (
     <header className="sticky top-0 z-30 bg-eli-navy/95 backdrop-blur-sm border-b border-eli-border">
@@ -182,6 +192,16 @@ const Header = ({ setIsOpen }) => {
             <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
             <span className="text-xs font-bold text-emerald-400 tracking-wider">LIVE</span>
           </div>
+
+          {/* Logout button */}
+          <button
+            onClick={onLogout}
+            className="p-2 rounded-full hover:bg-red-500/15 transition-colors group"
+            title="Logout"
+            data-testid="header-logout"
+          >
+            <LogOut className="w-5 h-5 text-eli-muted group-hover:text-red-400 transition-colors" />
+          </button>
         </div>
       </div>
     </header>
@@ -196,6 +216,13 @@ const AppRoutes = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const { toggleTheme } = useTheme();
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+    toast.success("Logged out successfully");
+  };
 
   // Global keyboard shortcuts
   useEffect(() => {
@@ -228,9 +255,9 @@ const AppRoutes = () => {
 
   return (
     <div className="min-h-screen bg-eli-navy">
-      <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+      <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} onLogout={handleLogout} />
       <div className="lg:ml-64">
-        <Header setIsOpen={setSidebarOpen} />
+        <Header setIsOpen={setSidebarOpen} onLogout={handleLogout} />
         <main className="p-4 lg:p-6">
           <Routes>
             <Route path="/login" element={<Login />} />

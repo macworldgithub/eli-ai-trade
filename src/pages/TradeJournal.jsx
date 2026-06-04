@@ -283,6 +283,7 @@ const LogTradeForm = ({ instruments, verdicts, prefill, onCreated, onClearPrefil
         : [];
 
       const payload = {
+        status: "OPEN",
         instrument: f.instrument,
         direction: f.direction,
         session: f.session,
@@ -638,6 +639,7 @@ const TradeRow = ({ trade, onClose, onScore, onDelete, scoringId, highlight }) =
     <div
       className={`eli-card p-5 transition-all duration-500 ${highlight ? "border-eli-gold shadow-[0_0_0_2px_rgba(212,175,55,0.3)] bg-eli-gold/5" : ""
         }`}
+      data-testid={`trade-${trade.id}`}
     >
       <div className="flex items-start justify-between mb-4 flex-wrap gap-3">
         <div className="flex items-center gap-3 flex-wrap">

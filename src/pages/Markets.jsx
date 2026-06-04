@@ -263,7 +263,6 @@ import {
   TrendingUp,
   TrendingDown,
   RefreshCw,
-  BarChart3,
   Zap,
   LayoutGrid,
   List as ListIcon,
@@ -287,25 +286,22 @@ export default function Markets() {
   const [instruments, setInstruments] = useState([]);
   const [tab, setTab] = useState("forex");
   const [selected, setSelected] = useState(null);
-  const [compareSymbols, setCompareSymbols] = useState([]); // For comparison mode
+  const [compareSymbols, setCompareSymbols] = useState([]);
   const [compareData, setCompareData] = useState([]);
   const [candles, setCandles] = useState([]);
   const [range, setRange] = useState("7d");
   const [layout, setLayout] = useState("single");
-  const [viewMode, setViewMode] = useState("list"); // 'list' | 'heatmap'
+  const [viewMode, setViewMode] = useState("list");
   const [loading, setLoading] = useState(true);
   const [loadingChart, setLoadingChart] = useState(false);
 
-  // AI Pattern Recognition (Mock for MVP)
   const [aiPatterns, setAiPatterns] = useState([]);
 
   const load = useCallback(async () => {
     try {
       const m = await marketAPI.getAllMarketData();
       setInstruments(m.data.instruments || []);
-      const first = (m.data.instruments || []).find(
-        (i) => i.asset_class === tab,
-      );
+      const first = (m.data.instruments || []).find((i) => i.asset_class === tab);
       if (first && !selected) setSelected(first.symbol);
       setLoading(false);
     } catch (e) {
@@ -321,10 +317,10 @@ export default function Markets() {
   useEffect(() => {
     if (!selected) return;
     setLoadingChart(true);
-    
+
     const fetchPromises = [
       marketAPI.getHistorical(selected, range),
-      ...compareSymbols.map(sym => marketAPI.getHistorical(sym, range))
+      ...compareSymbols.map((sym) => marketAPI.getHistorical(sym, range)),
     ];
 
     Promise.all(fetchPromises)
@@ -332,11 +328,10 @@ export default function Markets() {
         setCandles(results[0].data.candles || []);
         const compData = results.slice(1).map((r, i) => ({
           symbol: compareSymbols[i],
-          data: r.data.candles || []
+          data: r.data.candles || [],
         }));
         setCompareData(compData);
 
-        // Mock AI Pattern Recognition
         setAiPatterns([
           { name: "Bullish Engulfing", prob: 78, type: "bullish" },
           { name: "Support Bounce", prob: 65, type: "bullish" },
@@ -380,39 +375,37 @@ export default function Markets() {
   };
 
   return (
-    <div className="space-y-6" data-testid="markets-page">
-      <div className="flex justify-between items-end">
+    <div className="space-y-6 px-3 sm:px-4 lg:px-6" data-testid="markets-page">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-eli-text-white">
+          <h1 className="font-heading text-2xl sm:text-3xl font-bold text-eli-text-white">
             Markets
           </h1>
           <p className="text-sm text-eli-muted mt-1">
-            Live charts with AI pattern recognition • TradingView style
+            Live charts with AI pattern recognition
           </p>
         </div>
-        <div className="flex gap-2">
+
+        {/* Layout Buttons */}
+        <div className="flex gap-2 flex-wrap">
           {LAYOUTS.map((l) => (
             <button
               key={l}
               onClick={() => setLayout(l)}
-              className={`px-4 py-1.5 text-xs font-bold rounded-sm border transition-colors ${
-                layout === l
-                  ? "bg-eli-gold text-eli-navy"
-                  : "bg-eli-border/30 text-eli-muted border-eli-border"
-              }`}
+              className={`px-4 py-1.5 text-xs font-bold rounded-sm border transition-colors whitespace-nowrap ${layout === l
+                ? "bg-eli-gold text-eli-navy"
+                : "bg-eli-border/30 text-eli-muted border-eli-border hover:border-eli-gold/50"
+                }`}
             >
-              {l === "single"
-                ? "Single"
-                : l === "dual"
-                  ? "2 Charts"
-                  : "4 Charts"}
+              {l === "single" ? "Single" : l === "dual" ? "2 Charts" : "4 Charts"}
             </button>
           ))}
         </div>
       </div>
 
       {/* Asset Class Tabs */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
         {TABS.map((t) => (
           <button
             key={t}
@@ -421,11 +414,10 @@ export default function Markets() {
               const first = instruments.find((i) => i.asset_class === t);
               if (first) setSelected(first.symbol);
             }}
-            className={`px-5 py-2 text-sm font-bold rounded-sm border tracking-wider uppercase transition-colors ${
-              tab === t
-                ? "bg-eli-gold text-eli-navy border-eli-gold"
-                : "bg-eli-border/30 text-eli-muted border-eli-border hover:border-eli-gold/50"
-            }`}
+            className={`px-6 py-2.5 text-sm font-bold rounded-sm border tracking-wider uppercase transition-all whitespace-nowrap ${tab === t
+              ? "bg-eli-gold text-eli-navy border-eli-gold"
+              : "bg-eli-border/30 text-eli-muted border-eli-border hover:border-eli-gold/50"
+              }`}
           >
             {t}
           </button>
@@ -433,72 +425,72 @@ export default function Markets() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        {/* Instrument List / Heatmap */}
-        <div className="lg:col-span-3 eli-card overflow-hidden flex flex-col">
+        {/* Instrument List / Heatmap Sidebar */}
+        <div className="lg:col-span-3 eli-card overflow-hidden flex flex-col min-h-[500px] lg:min-h-0">
           <div className="px-4 py-3 border-b border-eli-border flex items-center justify-between">
             <div className="flex items-center gap-2">
               <h3 className="text-sm font-medium text-eli-text-white">
                 {tab.toUpperCase()}
               </h3>
-              <span className="text-xs text-eli-muted">{list.length}</span>
+              <span className="text-xs text-eli-muted">({list.length})</span>
             </div>
+
             <div className="flex bg-eli-navy rounded-sm p-0.5 border border-eli-border">
               <button
                 onClick={() => setViewMode("list")}
-                className={`p-1 rounded-sm ${viewMode === "list" ? "bg-eli-border text-eli-text-white" : "text-eli-muted hover:text-eli-text-white"}`}
+                className={`p-1.5 rounded-sm transition-colors ${viewMode === "list" ? "bg-eli-border text-eli-text-white" : "text-eli-muted hover:text-eli-text-white"
+                  }`}
               >
-                <ListIcon className="w-3.5 h-3.5" />
+                <ListIcon className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setViewMode("heatmap")}
-                className={`p-1 rounded-sm ${viewMode === "heatmap" ? "bg-eli-border text-eli-text-white" : "text-eli-muted hover:text-eli-text-white"}`}
+                className={`p-1.5 rounded-sm transition-colors ${viewMode === "heatmap" ? "bg-eli-border text-eli-text-white" : "text-eli-muted hover:text-eli-text-white"
+                  }`}
               >
-                <LayoutGrid className="w-3.5 h-3.5" />
+                <LayoutGrid className="w-4 h-4" />
               </button>
             </div>
           </div>
 
-          <div className="flex-1 overflow-auto max-h-[70vh]">
+          <div className="flex-1 overflow-auto">
             {viewMode === "list" ? (
               <div className="divide-y divide-eli-border">
                 {list.map((i) => {
                   const pos = i.change_percent >= 0;
                   const isSel = i.symbol === selected;
                   const isComp = compareSymbols.includes(i.symbol);
+
                   return (
                     <div
                       key={i.symbol}
                       onClick={() => setSelected(i.symbol)}
-                      className={`w-full px-4 py-3 flex items-center justify-between hover:bg-eli-border/40 transition-colors cursor-pointer text-left ${
-                        isSel ? "bg-eli-gold/10 border-l-2 border-eli-gold" : ""
-                      }`}
+                      className={`px-4 py-4 flex items-center justify-between hover:bg-eli-border/40 transition-colors cursor-pointer ${isSel ? "bg-eli-gold/10 border-l-4 border-eli-gold" : ""
+                        }`}
                     >
-                      <div>
+                      <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className="font-mono font-bold text-eli-text-white">
-                            {i.symbol}
-                          </p>
+                          <p className="font-mono font-bold text-eli-text-white">{i.symbol}</p>
                           {!isSel && (
                             <button
                               onClick={(e) => toggleCompare(e, i.symbol)}
-                              className={`p-0.5 rounded-sm border ${isComp ? "bg-eli-border border-eli-border text-eli-text-white" : "border-transparent text-eli-muted hover:border-eli-border hover:bg-eli-navy"}`}
-                              title={isComp ? "Remove Comparison" : "Add to Comparison"}
+                              className={`p-1 rounded-sm border transition-all ${isComp
+                                ? "bg-eli-border border-eli-border text-eli-text-white"
+                                : "border-transparent text-eli-muted hover:border-eli-border hover:bg-eli-navy"
+                                }`}
                             >
-                              {isComp ? <MinusIcon className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
+                              {isComp ? <MinusIcon className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
                             </button>
                           )}
                         </div>
-                        <p className="text-[10px] text-eli-muted truncate">
-                          {i.name}
-                        </p>
+                        <p className="text-xs text-eli-muted truncate mt-0.5">{i.name}</p>
                       </div>
+
                       <div className="text-right">
-                        <p className="font-mono text-eli-text-white tabular-nums">
+                        <p className="font-mono text-lg text-eli-text-white tabular-nums">
                           {i.price.toFixed(decimals)}
                         </p>
-                        <p
-                          className={`text-xs font-mono ${pos ? "text-emerald-400" : "text-red-400"}`}
-                        >
+                        <p className={`text-xs font-mono ${pos ? "text-emerald-400" : "text-red-400"}`}>
                           {pos ? "+" : ""}
                           {i.change_percent?.toFixed(2)}%
                         </p>
@@ -508,31 +500,33 @@ export default function Markets() {
                 })}
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-2 p-3">
+              <div className="grid grid-cols-2 gap-3 p-4">
                 {list.map((i) => {
                   const pos = i.change_percent >= 0;
                   const isSel = i.symbol === selected;
                   const isComp = compareSymbols.includes(i.symbol);
+
                   return (
                     <div
                       key={i.symbol}
                       onClick={() => setSelected(i.symbol)}
-                      className={`relative p-3 rounded-md flex flex-col items-center justify-center cursor-pointer transition-transform hover:scale-105 ${
-                        pos ? "bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/30" : "bg-red-500/20 hover:bg-red-500/30 border border-red-500/30"
-                      } ${isSel ? "ring-2 ring-eli-gold" : ""}`}
+                      className={`relative p-4 rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all active:scale-95 ${pos
+                        ? "bg-emerald-500/10 border border-emerald-500/30"
+                        : "bg-red-500/10 border border-red-500/30"
+                        } ${isSel ? "ring-2 ring-eli-gold" : ""}`}
                     >
                       {!isSel && (
                         <button
                           onClick={(e) => toggleCompare(e, i.symbol)}
-                          className={`absolute top-1 right-1 p-0.5 rounded-sm bg-black/20 hover:bg-black/40 text-white/70 hover:text-white transition-colors`}
-                          title={isComp ? "Remove Comparison" : "Add to Comparison"}
+                          className="absolute top-2 right-2 p-1 bg-black/40 rounded-full hover:bg-black/70"
                         >
-                          {isComp ? <MinusIcon className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
+                          {isComp ? <MinusIcon className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
                         </button>
                       )}
-                      <span className="font-mono font-bold text-white mb-1">{i.symbol}</span>
-                      <span className={`font-mono text-sm ${pos ? "text-emerald-300" : "text-red-300"}`}>
-                        {pos ? "+" : ""}{i.change_percent?.toFixed(2)}%
+                      <span className="font-mono font-bold text-lg text-white">{i.symbol}</span>
+                      <span className={`text-sm font-medium ${pos ? "text-emerald-400" : "text-red-400"}`}>
+                        {pos ? "+" : ""}
+                        {i.change_percent?.toFixed(2)}%
                       </span>
                     </div>
                   );
@@ -543,64 +537,56 @@ export default function Markets() {
         </div>
 
         {/* Main Chart Area */}
-        <div className="lg:col-span-9 eli-card p-5">
+        <div className="lg:col-span-9 eli-card p-4 sm:p-6">
           {current && (
             <>
-              <div className="flex justify-between items-start mb-5">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
                 <div>
-                  <h2 className="font-heading text-3xl font-bold text-eli-text-white">
+                  <h2 className="font-heading text-2xl sm:text-3xl font-bold text-eli-text-white">
                     {current.symbol}
                   </h2>
-                  <p className="text-eli-muted">{current.name}</p>
+                  <p className="text-eli-muted text-sm sm:text-base">{current.name}</p>
                 </div>
+
                 <div className="text-right">
-                  <p className="text-4xl font-bold text-eli-text-white tabular-nums">
+                  <p className="text-3xl sm:text-4xl font-bold text-eli-text-white tabular-nums">
                     {current.price.toFixed(decimals)}
                   </p>
-                  <p
-                    className={`text-sm flex items-center gap-1 justify-end ${positive ? "text-emerald-400" : "text-red-400"}`}
-                  >
-                    {positive ? (
-                      <TrendingUp className="w-4 h-4" />
-                    ) : (
-                      <TrendingDown className="w-4 h-4" />
-                    )}
+                  <p className={`text-sm flex items-center gap-1 justify-end ${positive ? "text-emerald-400" : "text-red-400"}`}>
+                    {positive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
                     {current.change_percent?.toFixed(2)}%
                   </p>
                 </div>
               </div>
 
               {/* Time Range + AI Insights */}
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex gap-1">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
+                <div className="flex gap-1 flex-wrap">
                   {RANGES.map((r) => (
                     <button
                       key={r.key}
                       onClick={() => setRange(r.key)}
-                      className={`px-4 py-1 text-xs font-bold rounded-sm transition-all ${
-                        range === r.key
-                          ? "bg-eli-gold text-eli-navy"
-                          : "bg-eli-border/30 text-eli-muted hover:bg-eli-border"
-                      }`}
+                      className={`px-4 py-2 text-xs sm:text-sm font-bold rounded-sm transition-all ${range === r.key
+                        ? "bg-eli-gold text-eli-navy"
+                        : "bg-eli-border/30 text-eli-muted hover:bg-eli-border"
+                        }`}
                     >
                       {r.label}
                     </button>
                   ))}
                 </div>
 
-                {/* AI Pattern Recognition */}
                 {aiPatterns.length > 0 && (
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-wrap">
                     {aiPatterns.map((p, i) => (
                       <div
                         key={i}
-                        className={`px-3 py-1 rounded-sm text-xs flex items-center gap-1.5 ${
-                          p.type === "bullish"
-                            ? "bg-emerald-500/10 text-emerald-400"
-                            : "bg-amber-500/10 text-amber-400"
-                        }`}
+                        className={`px-3 py-1.5 rounded-md text-xs flex items-center gap-1.5 ${p.type === "bullish"
+                          ? "bg-emerald-500/10 text-emerald-400"
+                          : "bg-amber-500/10 text-amber-400"
+                          }`}
                       >
-                        <Zap className="w-3 h-3" />
+                        <Zap className="w-3.5 h-3.5" />
                         {p.name} <span className="font-mono">({p.prob}%)</span>
                       </div>
                     ))}
@@ -608,47 +594,39 @@ export default function Markets() {
                 )}
               </div>
 
-              {/* Chart */}
-              <div className="h-[460px] relative">
+              {/* Chart Container */}
+              <div className="relative w-full" style={{ aspectRatio: "16 / 9" }}>
                 {loadingChart ? (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <RefreshCw className="w-8 h-8 animate-spin text-eli-gold" />
+                  <div className="absolute inset-0 flex items-center justify-center bg-eli-navy/50 rounded-xl">
+                    <RefreshCw className="w-10 h-10 animate-spin text-eli-gold" />
                   </div>
                 ) : (
-                  <div className="w-full h-full">
-                    <TradingViewChart data={chartData} positive={positive} aiPatterns={aiPatterns} compareData={compareData} />
+                  <div className="w-full h-full rounded-xl overflow-hidden border border-eli-border">
+                    <TradingViewChart
+                      data={chartData}
+                      positive={positive}
+                      aiPatterns={aiPatterns}
+                      compareData={compareData}
+                    />
                   </div>
                 )}
               </div>
 
               {/* OHLC Stats */}
-              <div className="grid grid-cols-4 gap-4 mt-6 pt-6 border-t border-eli-border">
-                <div>
-                  <p className="text-[10px] text-eli-muted uppercase">Open</p>
-                  <p className="font-mono text-eli-text-white">
-                    {current.open?.toFixed(decimals)}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-[10px] text-eli-muted uppercase">High</p>
-                  <p className="font-mono text-emerald-400">
-                    {current.high?.toFixed(decimals)}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-[10px] text-eli-muted uppercase">Low</p>
-                  <p className="font-mono text-red-400">
-                    {current.low?.toFixed(decimals)}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-[10px] text-eli-muted uppercase">
-                    Prev Close
-                  </p>
-                  <p className="font-mono text-eli-text-white">
-                    {current.previous_close?.toFixed(decimals)}
-                  </p>
-                </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-6 border-t border-eli-border">
+                {[
+                  { label: "Open", value: current.open, color: "text-eli-text-white" },
+                  { label: "High", value: current.high, color: "text-emerald-400" },
+                  { label: "Low", value: current.low, color: "text-red-400" },
+                  { label: "Prev Close", value: current.previous_close, color: "text-eli-text-white" },
+                ].map((item, idx) => (
+                  <div key={idx}>
+                    <p className="text-[10px] text-eli-muted uppercase tracking-widest">{item.label}</p>
+                    <p className={`font-mono text-lg ${item.color}`}>
+                      {item.value?.toFixed(decimals)}
+                    </p>
+                  </div>
+                ))}
               </div>
             </>
           )}

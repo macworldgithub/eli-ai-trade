@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import useInstruments from "../hooks/useInstruments";
 import { useSearchParams } from "react-router-dom";
 import {
   BookOpen,
@@ -135,11 +136,13 @@ const LogTradeForm = ({ instruments, verdicts, prefill, onCreated, onClearPrefil
   useEffect(() => {
     if (!prefill) return;
     const dec = decimalsFor(prefill.instrument || prefill.symbol);
-    const dir = prefill.direction || (prefill.action === "SELL" ? "SHORT" : "LONG");
+    const action = (prefill.action || prefill.verdict?.action || "").toUpperCase();
+    const dir = prefill.direction || (["SELL", "BEARISH"].includes(action) ? "SHORT" : "LONG");
 
     // Check if prefill contains verdict format (from verdicts array) or direct format
     const levels = prefill.key_levels || prefill.verdict?.key_levels || {};
-    const entry = levels.entry || prefill.entry_price || prefill.price_at_verdict || 0;
+    const px = liveOf(prefill.symbol || prefill.instrument);
+    const entry = levels.entry || prefill.entry_price || prefill.price_at_verdict || px || 0;
 
     const sl = levels.stop_loss || prefill.stop_loss || (dir === "LONG" ? entry * 0.995 : entry * 1.005);
     const tp = levels.take_profit || prefill.take_profit || (dir === "LONG" ? entry * 1.01 : entry * 0.99);
@@ -177,7 +180,8 @@ const LogTradeForm = ({ instruments, verdicts, prefill, onCreated, onClearPrefil
   const handleInst = (sym) => {
     const dec = decimalsFor(sym);
     const px = liveOf(sym);
-    const entry = px ?? f.entry_price;
+    const currentEntry = parseFloat(f.entry_price);
+    const entry = px ?? (Number.isFinite(currentEntry) ? currentEntry : undefined);
     const dir = f.direction;
     const sl = entry ? (dir === "LONG" ? entry * 0.995 : entry * 1.005) : f.stop_loss;
     const tp = entry ? (dir === "LONG" ? entry * 1.01 : entry * 0.99) : f.take_profit;
@@ -216,7 +220,8 @@ const LogTradeForm = ({ instruments, verdicts, prefill, onCreated, onClearPrefil
     if (!v?.verdict) return;
     const ver = v.verdict;
     const dec = decimalsFor(v.symbol);
-    const dir = ver.action === "SELL" ? "SHORT" : "LONG";
+    const action = ver.action?.toUpperCase();
+    const dir = ["SELL", "BEARISH"].includes(action) ? "SHORT" : "LONG";
     const px = liveOf(v.symbol);
     const entry = ver.key_levels?.entry ?? px ?? v.price_at_verdict;
     const sl = ver.key_levels?.stop_loss ?? (dir === "LONG" ? entry * 0.995 : entry * 1.005);
@@ -307,7 +312,10 @@ const LogTradeForm = ({ instruments, verdicts, prefill, onCreated, onClearPrefil
     setSaving(false);
   };
 
-  const buyVerdicts = (verdicts || []).filter((v) => ["BUY", "SELL"].includes(v?.verdict?.action));
+  const actionableVerdicts = (verdicts || []).filter((v) => {
+    const act = v?.verdict?.action?.toUpperCase();
+    return ["BUY", "SELL", "BULLISH", "BEARISH"].includes(act);
+  });
 
   return (
     <div className="eli-card border-eli-gold/40" data-testid="log-trade-form">
@@ -326,23 +334,26 @@ const LogTradeForm = ({ instruments, verdicts, prefill, onCreated, onClearPrefil
 
       <div className="p-6 space-y-5">
         {/* AI verdict quick-fill */}
-        {buyVerdicts.length > 0 && (
+        {actionableVerdicts.length > 0 && (
           <div className="flex items-center gap-2 flex-wrap" data-testid="verdict-chips">
             <span className="text-[10px] font-bold text-eli-gold uppercase tracking-wider flex items-center gap-1 bg-eli-gold/10 px-2 py-1 rounded-sm border border-eli-gold/30">
               <Sparkles className="w-3 h-3" /> AI Setups
             </span>
-            {buyVerdicts.map((v) => (
-              <button
-                key={v.symbol}
-                onClick={() => applyVerdict(v)}
-                className={`px-3 py-1 text-xs font-bold rounded-sm border ${v.verdict.action === "BUY"
-                  ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/40 hover:bg-emerald-500/20"
-                  : "bg-red-500/10 text-red-400 border-red-500/40 hover:bg-red-500/20"
-                  }`}
-              >
-                {v.verdict.action} {v.symbol}
-              </button>
-            ))}
+            {actionableVerdicts.map((v) => {
+              const isBullish = ["BUY", "BULLISH"].includes(v.verdict.action?.toUpperCase());
+              return (
+                <button
+                  key={v.symbol}
+                  onClick={() => applyVerdict(v)}
+                  className={`px-3 py-1 text-xs font-bold rounded-sm border ${isBullish
+                    ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/40 hover:bg-emerald-500/20"
+                    : "bg-red-500/10 text-red-400 border-red-500/40 hover:bg-red-500/20"
+                    }`}
+                >
+                  {v.verdict.action} {v.symbol}
+                </button>
+              )
+            })}
           </div>
         )}
 
@@ -356,7 +367,7 @@ const LogTradeForm = ({ instruments, verdicts, prefill, onCreated, onClearPrefil
               className="w-full px-4 py-3 bg-eli-border/40 border border-eli-border rounded-sm text-eli-text-white focus:outline-none focus:ring-2 focus:ring-eli-gold/50"
             >
               {instruments.map((i) => (
-                <option key={i.symbol} value={i.symbol}>{i.symbol}</option>
+                <option key={i.symbol} value={i.symbol}>{i.symbol} · {i.name}</option>
               ))}
             </select>
           </div>
@@ -788,8 +799,8 @@ const TradeRow = ({ trade, onClose, onScore, onDelete, scoringId, highlight }) =
 export default function TradeJournal() {
   const [trades, setTrades] = useState([]);
   const [stats, setStats] = useState(null);
-  const [instruments, setInstruments] = useState([]);
   const [verdicts, setVerdicts] = useState([]);
+  const { instruments, loading: instrumentsLoading } = useInstruments();
   const [scoringId, setScoringId] = useState(null);
   const [patterns, setPatterns] = useState(null);
   const [loadingPatterns, setLoadingPatterns] = useState(false);
@@ -799,15 +810,13 @@ export default function TradeJournal() {
 
   const load = useCallback(async () => {
     try {
-      const [t, s, m, v] = await Promise.all([
+      const [t, s, v] = await Promise.all([
         tradeAPI.getTrades(),
         tradeAPI.getTradeStats(),
-        marketAPI.getAllMarketData(),
         aiAPI.getAllVerdicts().catch(() => ({ data: { verdicts: [] } })),
       ]);
       setTrades(t.data || []);
       setStats(s.data);
-      setInstruments(m.data.instruments || []);
       setVerdicts(v.data?.verdicts || []);
     } catch (err) {
       console.error(err);

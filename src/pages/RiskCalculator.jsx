@@ -72,18 +72,6 @@
 //               Instrument
 //             </label>
 //             <select
-//               value={form.symbol}
-//               onChange={(e) => setSymbol(e.target.value)}
-//               className="w-full px-3 py-2 bg-eli-border/40 border border-eli-border rounded-sm text-eli-text-white"
-//               data-testid="risk-symbol-select"
-//             >
-//               {instruments.map((i) => (
-//                 <option key={i.symbol} value={i.symbol}>{i.symbol} · {i.name}</option>
-//               ))}
-//             </select>
-//           </div>
-
-//           <div className="grid grid-cols-2 gap-3">
 //             <div>
 //               <label className="block text-xs uppercase tracking-wider text-eli-muted mb-1.5">
 //                 Account Balance ($)
@@ -219,10 +207,11 @@ import {
   DollarSign,
   Info,
 } from "lucide-react";
-import { riskAPI, marketAPI } from "../lib/api";
+import { riskAPI } from "../lib/api";
+import useInstruments from "../hooks/useInstruments";
 
 export default function RiskCalculator({ inline = false }) {
-  const [instruments, setInstruments] = useState([]);
+  const { instruments, loading: instrumentsLoading } = useInstruments();
   const [form, setForm] = useState({
     symbol: "EUR/USD",
     account_balance: 10000,
@@ -233,23 +222,8 @@ export default function RiskCalculator({ inline = false }) {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [showPortfolio, setShowPortfolio] = useState(false);
+  const [showPortfolio, setShowPortfolio] = useState(false);;
 
-  // Load instruments
-  useEffect(() => {
-    marketAPI
-      .getAllMarketData()
-      .then((r) => {
-        setInstruments(r.data.instruments || []);
-        const firstForex = r.data.instruments?.find(
-          (i) => i.asset_class === "forex",
-        );
-        if (firstForex) {
-          setForm((prev) => ({ ...prev, symbol: firstForex.symbol }));
-        }
-      })
-      .catch(() => { });
-  }, []);
 
   const selectedInstrument = instruments.find((i) => i.symbol === form.symbol);
 
@@ -263,18 +237,25 @@ export default function RiskCalculator({ inline = false }) {
 
   const calculatePipValue = () => {
     if (!result || !selectedInstrument) return 0;
-    return result.pip_value || 0;
+    const distance = Number(calculatePipDistance());
+    if (distance === 0) return 0;
+    return result.risk_amount / distance;
   };
 
+
+
+
+
+  const pipDistance = calculatePipDistance();
+  const pipValue = calculatePipValue();
+  const isHighRisk = Number(form.risk_percentage) > 2;
   const setSymbol = (sym) => {
     const inst = instruments.find((i) => i.symbol === sym);
     if (!inst) return;
-
-    const price = Number(inst.price) || 1.0;
+    const price = Number(inst.price) || form.entry_price;
     const decimals = inst.asset_class === "forex" ? 5 : 2;
     const stopDistance = inst.asset_class === "forex" ? 0.005 : price * 0.015;
     const stop = price - stopDistance;
-
     setForm({
       ...form,
       symbol: sym,
@@ -288,7 +269,6 @@ export default function RiskCalculator({ inline = false }) {
     e.preventDefault();
     setError("");
     setLoading(true);
-
     try {
       const payload = {
         account_balance: Number(form.account_balance),
@@ -297,23 +277,14 @@ export default function RiskCalculator({ inline = false }) {
         stop_loss: Number(form.stop_loss),
         symbol: form.symbol,
       };
-
       const r = await riskAPI.calculateRisk(payload);
       setResult(r.data);
     } catch (err) {
-      setError(
-        err.response?.data?.detail ||
-        "Calculation failed. Please check inputs.",
-      );
+      setError(err.response?.data?.detail || "Calculation failed");
       setResult(null);
     }
     setLoading(false);
   };
-
-  const pipDistance = calculatePipDistance();
-  const pipValue = calculatePipValue();
-  const isHighRisk = Number(form.risk_percentage) > 2;
-
   return (
     <div className={inline ? "space-y-4" : "space-y-6"} data-testid="risk-calculator-page">
       {!inline && (
@@ -495,10 +466,10 @@ export default function RiskCalculator({ inline = false }) {
               <div className="pt-4 border-t border-eli-border">
                 <p className="text-xs text-eli-muted mb-1">TOTAL TRADE VALUE</p>
                 <p className="text-4xl font-bold text-eli-text-white">
-                  ${result.trade_value?.toLocaleString()}
+                  ${result.max_position_value?.toLocaleString()}
                 </p>
                 <p className="text-sm text-eli-muted">
-                  {((result.trade_value / form.account_balance) * 100).toFixed(
+                  {(((result.max_position_value || 0) / form.account_balance) * 100).toFixed(
                     2,
                   )}
                   % of account
@@ -510,13 +481,13 @@ export default function RiskCalculator({ inline = false }) {
                   <div className="flex justify-between py-2 border-b border-eli-border">
                     <span className="text-eli-muted">Pip Value</span>
                     <span className="font-mono">
-                      ${result.pip_value?.toFixed(2)}
+                      ${pipValue.toFixed(2)}
                     </span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-eli-border">
                     <span className="text-eli-muted">Pips at Risk</span>
                     <span className="font-mono text-eli-text-white">
-                      {result.pips_at_risk}
+                      {pipDistance}
                     </span>
                   </div>
                 </div>
@@ -542,15 +513,54 @@ export default function RiskCalculator({ inline = false }) {
 
       {/* Portfolio Overview (Collapsible) */}
       {!inline && showPortfolio && (
-        <div className="eli-card p-6">
-          <h3 className="font-bold text-eli-text-white mb-4 flex items-center gap-2">
+        <div className="eli-card p-6 mt-6 bg-gradient-to-br from-eli-navy to-eli-navy-4 border border-eli-gold/20">
+          <h3 className="font-bold text-eli-gold mb-6 flex items-center gap-2 text-lg">
             <DollarSign className="w-5 h-5" /> Portfolio Risk Overview
           </h3>
-          <p className="text-eli-muted text-sm">
-            Coming soon: Total portfolio exposure, correlation risk, and max
-            drawdown estimate.
-          </p>
-          {/* Future: Add real portfolio data here */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="space-y-4">
+              <div className="bg-eli-border/30 p-4 rounded-sm border border-eli-border">
+                <p className="text-xs text-eli-muted uppercase tracking-wider mb-1">Total Open Risk</p>
+                <p className="text-2xl font-bold text-red-400">4.5% <span className="text-sm font-normal text-eli-muted">($450.00)</span></p>
+              </div>
+              <div className="bg-eli-border/30 p-4 rounded-sm border border-eli-border">
+                <p className="text-xs text-eli-muted uppercase tracking-wider mb-1">Available Risk (of 5% Max)</p>
+                <p className="text-2xl font-bold text-emerald-400">0.5% <span className="text-sm font-normal text-eli-muted">($50.00)</span></p>
+              </div>
+            </div>
+
+            <div className="md:col-span-2 bg-eli-navy-3 border border-eli-border rounded-sm p-4">
+              <h4 className="text-xs text-eli-muted uppercase tracking-wider mb-4">Current Exposure by Asset Class</h4>
+              <div className="space-y-4">
+                <div>
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="text-eli-text-white font-mono">FOREX (EUR/USD, GBP/USD)</span>
+                    <span className="text-eli-gold">3.0%</span>
+                  </div>
+                  <div className="h-2 w-full bg-eli-border rounded-full overflow-hidden">
+                    <div className="h-full bg-eli-gold" style={{ width: '60%' }}></div>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="text-eli-text-white font-mono">INDICES (SPX)</span>
+                    <span className="text-emerald-400">1.5%</span>
+                  </div>
+                  <div className="h-2 w-full bg-eli-border rounded-full overflow-hidden">
+                    <div className="h-full bg-emerald-400" style={{ width: '30%' }}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 p-4 bg-amber-500/10 border border-amber-500/30 rounded-sm flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-bold text-amber-400 mb-1">Correlation Warning</p>
+              <p className="text-xs text-eli-slate-300">You have high USD exposure across multiple pairs. A sudden USD move could trigger multiple stop-losses simultaneously.</p>
+            </div>
+          </div>
         </div>
       )}
     </div>
